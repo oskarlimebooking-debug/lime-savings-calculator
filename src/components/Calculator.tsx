@@ -8,9 +8,10 @@ import { CategoryPicker } from "./CategoryPicker";
 import { RegionPicker } from "./RegionPicker";
 import { NoShowInput } from "./NoShowInput";
 import { ResultsPanel } from "./ResultsPanel";
-import { getPrice } from "../lib/data";
+import { getPrice, LIME_BOOKING_URL } from "../lib/data";
 import { calculateSavings } from "../lib/calc";
 import { copyToClipboard } from "../lib/clipboard";
+import { track } from "../lib/analytics";
 
 interface CalculatorProps {
   initialState: UrlState;
@@ -53,6 +54,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
 
     try {
       await copyToClipboard(shareUrl);
+      track("copy_link");
       toast.success("Povezava kopirana v odložišče!", {
         id: "copy-success-toast",
         duration: 3000,
@@ -187,12 +189,13 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
 
             <a
               id="cta-register-button"
-              href="https://limebooking.si"
+              href={LIME_BOOKING_URL}
+              onClick={() => track("cta_click")}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-lime-600 dark:bg-lime-500 text-white font-semibold text-sm transition-all hover:bg-lime-700 dark:hover:bg-lime-600 active:scale-98 focus:outline-none focus:ring-2 focus:ring-lime-500/50 shadow-md shadow-lime-600/10"
             >
-              Uporabi Lime Booking
+              Preizkusi Lime Booking
               <svg
                 className="w-5 h-5 text-white"
                 fill="none"

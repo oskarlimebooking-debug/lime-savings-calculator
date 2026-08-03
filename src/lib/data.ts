@@ -11,6 +11,11 @@ export const NOSHOW_REDUCTION = 0.6;
  */
 export const LIME_MONTHLY_PRICE = 14.90;
 
+/**
+ * The official Lime Booking URL.
+ */
+export const LIME_BOOKING_URL = "https://limebooking.si";
+
 export interface Category {
   slug: string;
   name: string;

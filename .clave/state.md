@@ -1,8 +1,10 @@
 # Current State
 
-> Last updated: 2026-08-03 10:07
+> Last updated: 2026-08-03 10:12
 
 ## What Was Just Done
+
+**2026-08-03 12:12:** T4.1: Vercel Analytics integration and deploy configuration fully implemented. Added a typed `track` wrapper with a closed union event type (`copy_link` | `cta_click`) supporting custom sink injection. Set up `vercel.json` deployment rules, updated `README.md` documentation, added the CTA button linking to `LIME_BOOKING_URL` with click tracking, and verified with 3 passing tests in Vitest. Production build, typecheck, and linter check pass cleanly.
 
 **2026-08-03 12:08:** T3.3: Live URL sync + copy link + toast fully implemented. Enabled dynamic browser URL synchronization via `router.replace`, hydrated initial state with server-parsed `searchParams`, added a sharing URL copy handler with an injectable clipboard function, integrated custom `react-hot-toast` notifications, and covered by 3 new unit tests in Vitest. Build, typecheck, lint, and tests all pass cleanly.
 
@@ -24,7 +26,7 @@
 
 ## What's Next
 
-T4.1 — Analytics events + Vercel deploy config
+None. All backlog tasks completed.
 
 ## Blockers
 
