@@ -1,8 +1,10 @@
 # Current State
 
-> Last updated: 2026-08-03 12:03
+> Last updated: 2026-08-03 10:07
 
 ## What Was Just Done
+
+**2026-08-03 12:08:** T3.3: Live URL sync + copy link + toast fully implemented. Enabled dynamic browser URL synchronization via `router.replace`, hydrated initial state with server-parsed `searchParams`, added a sharing URL copy handler with an injectable clipboard function, integrated custom `react-hot-toast` notifications, and covered by 3 new unit tests in Vitest. Build, typecheck, lint, and tests all pass cleanly.
 
 **2026-08-03 12:03:** T3.2: ResultsPanel component and pure helpers (formatEUR, roiLabel, getRoiClass) fully implemented and tested. Added 6 new unit/component tests in vitest, and configured vitest to handle JSX with Oxc. Passed all linter, typecheck, and production build checks.
 
@@ -22,7 +24,7 @@
 
 ## What's Next
 
-T3.3 — Live URL sync + copy link + toast
+T4.1 — Analytics events + Vercel deploy config
 
 ## Blockers
 

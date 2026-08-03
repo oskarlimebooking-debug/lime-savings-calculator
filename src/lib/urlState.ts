@@ -54,7 +54,9 @@ function getParamValue(
   }
 
   if (typeof input === "string") {
-    const cleanStr = input.startsWith("?") ? input.slice(1) : input;
+    const queryIdx = input.indexOf("?");
+    const queryStr = queryIdx !== -1 ? input.slice(queryIdx) : input;
+    const cleanStr = queryStr.startsWith("?") ? queryStr.slice(1) : queryStr;
     const params = new URLSearchParams(cleanStr);
     const val = params.get(key);
     return val !== null ? val : undefined;
@@ -121,4 +123,12 @@ export function toQueryString(state: Partial<UrlState>): string {
   params.set("period", period);
 
   return `?${params.toString()}`;
+}
+
+/**
+ * Combines a base URL with serialized state into a shareable URL.
+ */
+export function buildShareUrl(state: UrlState, baseUrl: string): string {
+  const cleanBase = baseUrl.split("?")[0];
+  return `${cleanBase}${toQueryString(state)}`;
 }
