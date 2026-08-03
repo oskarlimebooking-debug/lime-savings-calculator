@@ -1,4 +1,18 @@
 import Image from "next/image";
+import { Metadata } from "next";
+import { parseParams } from "../lib/urlState";
+import { buildMetadata } from "../lib/metadata";
+
+export const revalidate = 3600; // Revalidate every hour (ISR)
+
+interface PageProps {
+  searchParams: Record<string, string | string[] | undefined>;
+}
+
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+  const state = parseParams(searchParams);
+  return buildMetadata(state);
+}
 
 export default function Home() {
   return (
