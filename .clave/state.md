@@ -1,8 +1,10 @@
 # Current State
 
-> Last updated: 2026-08-03 11:59
+> Last updated: 2026-08-03 12:03
 
 ## What Was Just Done
+
+**2026-08-03 12:03:** T3.2: ResultsPanel component and pure helpers (formatEUR, roiLabel, getRoiClass) fully implemented and tested. Added 6 new unit/component tests in vitest, and configured vitest to handle JSX with Oxc. Passed all linter, typecheck, and production build checks.
 
 **2026-08-03 11:58:** T3.1: Step components (CategoryPicker, RegionPicker, NoShowInput) fully implemented as controlled components. Created pure business logic helpers in src/lib/stepHelpers.ts with 9 passing Vitest tests. Components are responsive, support dark mode, and typecheck successfully.
 
@@ -20,7 +22,7 @@
 
 ## What's Next
 
-T3.2 — Results panel with ROI highlight
+T3.3 — Live URL sync + copy link + toast
 
 ## Blockers
 
