@@ -1,8 +1,10 @@
 # Current State
 
-> Last updated: 2026-08-03 11:46
+> Last updated: 2026-08-03 11:51
 
 ## What Was Just Done
+
+**2026-08-03 11:51:** T2.1: URL param serialization/parsing (`lib/urlState.ts`) fully implemented, supporting multi-format parsing, serialization, validation, and safe defaults. All 4 acceptance criteria verified via Vitest tests. Linter, typechecking, and Next.js builds green.
 
 **2026-08-03 11:46:** T1.3: Pure calculation engine (`lib/calc.ts`) fully implemented, including period normalization, saving calculations, and ROI tiering. All 5 acceptance criteria verified with extensive Vitest tests.
 
@@ -14,7 +16,7 @@
 
 ## What's Next
 
-T2.1 — URL param serialization/parsing
+T2.2 — Dynamic SEO metadata (generateMetadata)
 
 ## Blockers
 
