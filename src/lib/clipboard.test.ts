@@ -9,6 +9,7 @@ describe("Clipboard copy handler and URL building (T3.3)", () => {
     noshows: 15,
     period: "weekly",
     pkg: "advanced",
+    lang: "sl",
   };
 
   test("AC1: buildShareUrl produces a string that parseParams round-trips back to current state", () => {

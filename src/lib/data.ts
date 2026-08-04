@@ -4,7 +4,7 @@
 export const LIME_BOOKING_URL = "https://lime-booking.com";
 
 export interface Package {
-  slug: "basic" | "advanced";
+  slug: "basic" | "advanced" | "growth" | "pro";
   name: string;
   /** Monthly subscription price in EUR, billed monthly, excl. VAT. */
   monthlyPrice: number;
@@ -14,39 +14,67 @@ export interface Package {
   /** Included SMS reminders per month, or null for email-only packages. */
   smsCount: number | null;
   tagline: string;
+  /** Headline features shown in the package picker, from lime-booking.si/cenik. */
+  features: readonly string[];
 }
 
 /**
  * Lime Booking subscription packages and their estimated no-show reduction rates.
- * Prices and feature sets sourced from the official pricing page (lime-booking.com/pricing).
+ * Prices and feature sets sourced from the official pricing page (lime-booking.si/cenik),
+ * using the full monthly (non-annual-discount) price.
  *
  * Reduction rates are differentiated by reminder channel, based on reminder-effectiveness
  * research:
  * - Basic sends e-mail-only reminders. Systematic reviews of automated (non-SMS) appointment
  *   reminder interventions report no-show reductions of roughly 29-30% versus no reminder.
- * - Advanced adds SMS reminders (150/month included). SMS has ~98% open rates, most read within
- *   minutes, and multi-touch SMS reminder programs are documented to cut no-shows by up to ~58-60%,
- *   meaningfully outperforming e-mail-only reminders.
- * See the in-app "i" info panel for the full source list.
+ * - Advanced and up add SMS reminders (150/month included). SMS has ~98% open rates, most read
+ *   within minutes, and multi-touch SMS reminder programs are documented to cut no-shows by up
+ *   to ~58-60%, meaningfully outperforming e-mail-only reminders. Growth and Pro carry the same
+ *   SMS-driven reduction rate as Advanced — their extra features (queuing, multi-language SMS,
+ *   dynamic pricing, etc.) aren't independently linked to a higher no-show reduction in the
+ *   research, so we don't inflate the estimate for them.
+ * See the in-app info panel for the full source list.
  */
 export const PACKAGES: readonly Package[] = [
   {
     slug: "basic",
-    name: "Basic",
+    name: "Osnovni",
     monthlyPrice: 14.90,
     noShowReduction: 0.3,
     notificationChannel: "email",
     smsCount: null,
     tagline: "E-poštni opomniki",
+    features: ["Spletni koledar", "Spletno naročanje", "E-mail obvestila", "Analitika"],
   },
   {
     slug: "advanced",
-    name: "Advanced",
+    name: "Napredni",
     monthlyPrice: 29.90,
     noShowReduction: 0.6,
     notificationChannel: "sms",
     smsCount: 150,
     tagline: "SMS + e-poštni opomniki",
+    features: ["150 SMS opomnikov/mesec", "Skupinski termini", "Avansna plačila", "Kombinirane storitve"],
+  },
+  {
+    slug: "growth",
+    name: "Growth",
+    monthlyPrice: 49.90,
+    noShowReduction: 0.6,
+    notificationChannel: "sms",
+    smsCount: 150,
+    tagline: "SMS opomniki + čakalna vrsta",
+    features: ["Čakalna vrsta", "Akcije in popusti za stranke", "Ime podjetja v SMS-ih", "Sobe in naprave"],
+  },
+  {
+    slug: "pro",
+    name: "Pro",
+    monthlyPrice: 69.90,
+    noShowReduction: 0.6,
+    notificationChannel: "sms",
+    smsCount: 150,
+    tagline: "SMS v več jezikih + napredne cene",
+    features: ["SMS obvestila v več jezikih", "Dinamično trajanje storitev", "Tarifne cene", "Pixel & CAPI integracija"],
   },
 ] as const;
 
@@ -74,6 +102,41 @@ export const NOSHOW_REDUCTION = DEFAULT_PACKAGE.noShowReduction;
  * The monthly subscription price of the default (Advanced/SMS) package, in EUR.
  */
 export const LIME_MONTHLY_PRICE = DEFAULT_PACKAGE.monthlyPrice;
+
+export interface Addon {
+  slug: "extraUsers" | "extraLocations" | "extraResources";
+  name: string;
+  /** Monthly price per unit, in EUR, excl. VAT. */
+  unitPrice: number;
+}
+
+/**
+ * Optional add-ons layered on top of a package's base price, sourced from
+ * lime-booking.si/cenik. Default quantity for every add-on is 0 (no extras) —
+ * the viewer can dial any of them up if their setup needs more than one
+ * user/location/resource.
+ */
+export const ADDONS: readonly Addon[] = [
+  { slug: "extraUsers", name: "Dodatni uporabnik", unitPrice: 9.90 },
+  { slug: "extraLocations", name: "Dodatna lokacija", unitPrice: 9.90 },
+  { slug: "extraResources", name: "Dodatno sredstvo", unitPrice: 7.90 },
+] as const;
+
+export type AddonSlug = typeof ADDONS[number]["slug"];
+
+export type AddonQuantities = Partial<Record<AddonSlug, number>>;
+
+/**
+ * Sums the monthly cost of the given add-on quantities. Missing/invalid
+ * quantities are treated as 0.
+ */
+export function calculateAddonsTotal(quantities: AddonQuantities | undefined): number {
+  if (!quantities) return 0;
+  return ADDONS.reduce((sum, addon) => {
+    const qty = quantities[addon.slug];
+    return sum + (typeof qty === "number" && qty > 0 ? qty * addon.unitPrice : 0);
+  }, 0);
+}
 
 export interface Category {
   slug: string;

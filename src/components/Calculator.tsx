@@ -9,12 +9,15 @@ import { RegionPicker } from "./RegionPicker";
 import { NoShowInput } from "./NoShowInput";
 import { PackagePicker } from "./PackagePicker";
 import { PriceInput } from "./PriceInput";
+import { AddonsPicker } from "./AddonsPicker";
+import { LanguagePicker } from "./LanguagePicker";
 import { InfoModal } from "./InfoModal";
 import { ResultsPanel } from "./ResultsPanel";
-import { getPrice, getPackage, LIME_BOOKING_URL } from "../lib/data";
-import { calculateSavings, buildFootnoteText } from "../lib/calc";
+import { getPrice, getPackage, AddonSlug } from "../lib/data";
+import { calculateSavings } from "../lib/calc";
 import { copyToClipboard } from "../lib/clipboard";
 import { track } from "../lib/analytics";
+import { getTranslations, buildLocalizedFootnote, LANG_TO_URL } from "../lib/i18n";
 
 interface CalculatorProps {
   initialState: UrlState;
@@ -31,7 +34,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
   // Sync state to URL search parameters
   useEffect(() => {
     const query = toQueryString(state);
-    
+
     // On mount, if URL already matches the state query string, avoid router call
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -45,24 +48,36 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
     router.replace(query, { scroll: false });
   }, [state, router]);
 
+  const t = getTranslations(state.lang);
+  const ctaUrl = LANG_TO_URL[state.lang];
+
   // Calculate pricing and savings based on current state
   const defaultPrice = getPrice(state.category, state.region);
   const isCustomPrice = state.customPrice !== undefined;
   const price = state.customPrice ?? defaultPrice;
-  const results = calculateSavings(state.noshows, state.period, price, state.pkg);
+  const addons = {
+    extraUsers: state.extraUsers,
+    extraLocations: state.extraLocations,
+    extraResources: state.extraResources,
+  };
+  const results = calculateSavings(state.noshows, state.period, price, state.pkg, addons);
   const selectedPackage = getPackage(state.pkg);
+
+  const handleAddonChange = (slug: AddonSlug, qty: number) => {
+    setState((prev) => ({ ...prev, [slug]: qty > 0 ? qty : undefined }));
+  };
 
   // Copy handler
   const handleCopyLink = async () => {
-    const baseUrl = typeof window !== "undefined" 
-      ? window.location.href 
+    const baseUrl = typeof window !== "undefined"
+      ? window.location.href
       : "http://localhost:3000/";
     const shareUrl = buildShareUrl(state, baseUrl);
 
     try {
       await copyToClipboard(shareUrl);
       track("copy_link");
-      toast.success("Povezava kopirana v odložišče!", {
+      toast.success(t.actions.copySuccess, {
         id: "copy-success-toast",
         duration: 3000,
         style: {
@@ -78,7 +93,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
         },
       });
     } catch {
-      toast.error("Napaka pri kopiranju povezave v odložišče.", {
+      toast.error(t.actions.copyError, {
         id: "copy-error-toast",
         duration: 3000,
       });
@@ -90,17 +105,25 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
       {/* Toast Notification Provider */}
       <Toaster position="bottom-center" />
 
+      {/* Top bar: language picker */}
+      <div className="flex justify-end mb-6">
+        <LanguagePicker
+          value={state.lang}
+          onChange={(lang) => setState((prev) => ({ ...prev, lang }))}
+        />
+      </div>
+
       {/* Hero section / Header */}
       <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16 flex flex-col gap-4">
         <div className="inline-flex items-center justify-center gap-2 px-3 py-1 bg-lime-50 dark:bg-lime-950/30 text-lime-700 dark:text-lime-400 border border-lime-200/50 dark:border-lime-900/30 rounded-full text-xs font-semibold uppercase tracking-wider w-fit mx-auto">
           <span className="w-2 h-2 rounded-full bg-lime-500 animate-pulse"></span>
-          Kalkulator prihrankov
+          {t.hero.badge}
         </div>
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
-          Lime kalkulator <span className="text-lime-600 dark:text-lime-400">prihrankov</span>
+          {t.hero.title} <span className="text-lime-600 dark:text-lime-400">{t.hero.titleHighlight}</span>
         </h1>
         <p className="text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto font-medium">
-          Izračunajte, koliko prihodka izgubljate zaradi neudeležb strank in spoznajte, kako vam lahko Lime Booking povrne izgubljeni čas in denar.
+          {t.hero.subtitle}
         </p>
       </div>
 
@@ -115,12 +138,13 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
                 1
               </span>
               <h2 className="text-lg md:text-xl font-bold text-gray-800 dark:text-gray-200">
-                Izberite vašo dejavnost
+                {t.steps.category}
               </h2>
             </div>
             <CategoryPicker
               value={state.category}
               onChange={(category) => setState((prev) => ({ ...prev, category }))}
+              lang={state.lang}
             />
           </div>
 
@@ -131,12 +155,13 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
                 2
               </span>
               <h2 className="text-lg md:text-xl font-bold text-gray-800 dark:text-gray-200">
-                Izberite vašo regijo
+                {t.steps.region}
               </h2>
             </div>
             <RegionPicker
               value={state.region}
               onChange={(region) => setState((prev) => ({ ...prev, region }))}
+              lang={state.lang}
             />
 
             <div className="h-px bg-gray-100 dark:bg-zinc-800/60 w-full" />
@@ -147,6 +172,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
               isCustom={isCustomPrice}
               onChange={(customPrice) => setState((prev) => ({ ...prev, customPrice }))}
               onReset={() => setState((prev) => ({ ...prev, customPrice: undefined }))}
+              lang={state.lang}
             />
           </div>
 
@@ -157,7 +183,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
                 3
               </span>
               <h2 className="text-lg md:text-xl font-bold text-gray-800 dark:text-gray-200">
-                Koliko neudeležb (no-shows) zabeležite?
+                {t.steps.noshows}
               </h2>
             </div>
             <NoShowInput
@@ -165,6 +191,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
               period={state.period}
               onChange={(noshows) => setState((prev) => ({ ...prev, noshows }))}
               onPeriodChange={(period) => setState((prev) => ({ ...prev, period }))}
+              lang={state.lang}
             />
           </div>
 
@@ -175,13 +202,27 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
                 4
               </span>
               <h2 className="text-lg md:text-xl font-bold text-gray-800 dark:text-gray-200">
-                Izberite paket Lime Booking
+                {t.steps.pkg}
               </h2>
             </div>
             <PackagePicker
               value={state.pkg}
               onChange={(pkg) => setState((prev) => ({ ...prev, pkg }))}
+              lang={state.lang}
             />
+          </div>
+
+          {/* Step 5: Add-ons */}
+          <div className="bg-white dark:bg-zinc-900/20 border border-gray-100 dark:border-zinc-800/80 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col gap-5">
+            <div className="flex items-center gap-3">
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-lime-100 dark:bg-lime-950/50 text-lime-700 dark:text-lime-400 font-bold text-sm">
+                5
+              </span>
+              <h2 className="text-lg md:text-xl font-bold text-gray-800 dark:text-gray-200">
+                {t.steps.addons}
+              </h2>
+            </div>
+            <AddonsPicker quantities={addons} onChange={handleAddonChange} lang={state.lang} />
           </div>
         </div>
 
@@ -194,10 +235,11 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
             roiMonths={results.roiMonths}
             roiTier={results.roiTier}
             noShowReduction={selectedPackage.noShowReduction}
-            footnote={buildFootnoteText(state.pkg)}
+            footnote={buildLocalizedFootnote(state.pkg, state.lang)}
             onInfoClick={() => setInfoOpen(true)}
+            lang={state.lang}
           />
-          <InfoModal packageSlug={state.pkg} open={infoOpen} onClose={() => setInfoOpen(false)} />
+          <InfoModal packageSlug={state.pkg} open={infoOpen} onClose={() => setInfoOpen(false)} lang={state.lang} />
 
           {/* Copy Link & Share Actions */}
           <div className="flex flex-col sm:flex-row gap-3 w-full">
@@ -221,18 +263,18 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
                   d="M13.828 10.172a4 4 0 0 0-5.656 0l-4 4a4 4 0 1 0 5.656 5.656l1.102-1.101m-.758-4.899a4 4 0 0 0 5.656 0l4-4a4 4 0 0 0-5.656-5.656l-1.1 1.1"
                 />
               </svg>
-              Kopiraj povezavo
+              {t.actions.copyLink}
             </button>
 
             <a
               id="cta-register-button"
-              href={LIME_BOOKING_URL}
+              href={ctaUrl}
               onClick={() => track("cta_click")}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-lime-600 dark:bg-lime-500 text-white font-semibold text-sm transition-all hover:bg-lime-700 dark:hover:bg-lime-600 active:scale-98 focus:outline-none focus:ring-2 focus:ring-lime-500/50 shadow-md shadow-lime-600/10"
             >
-              Preizkusi Lime Booking
+              {t.actions.cta}
               <svg
                 className="w-5 h-5 text-white"
                 fill="none"

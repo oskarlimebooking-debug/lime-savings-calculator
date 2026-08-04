@@ -1,27 +1,30 @@
 import { UrlState } from "./urlState";
-import { CATEGORIES, REGIONS, getPrice } from "./data";
+import { getPrice } from "./data";
 import { calculateSavings } from "./calc";
+import { getCategoryName, getRegionName, getTranslations, LANG_LOCALE, DEFAULT_LANG } from "./i18n";
 
 /**
  * Generates the SEO metadata object for Next.js based on the calculator state.
  */
 export function buildMetadata(state: UrlState) {
-  const categoryObj = CATEGORIES.find((c) => c.slug === state.category);
-  const regionObj = REGIONS.find((r) => r.slug === state.region);
-
-  const categoryName = categoryObj ? categoryObj.name : state.category;
-  const regionName = regionObj ? regionObj.name : state.region;
+  const lang = state.lang ?? DEFAULT_LANG;
+  const t = getTranslations(lang);
+  const categoryName = getCategoryName(state.category, lang);
+  const regionName = getRegionName(state.region, lang);
 
   const price = state.customPrice ?? getPrice(state.category, state.region);
-  const savings = calculateSavings(state.noshows, state.period, price, state.pkg);
+  const savings = calculateSavings(state.noshows, state.period, price, state.pkg, {
+    extraUsers: state.extraUsers,
+    extraLocations: state.extraLocations,
+    extraResources: state.extraResources,
+  });
   const yearlyLoss = savings.yearlyLoss;
 
-  // Format the yearly loss with dot separator for thousands (Slovenian style)
   const roundedLoss = Math.round(yearlyLoss);
-  const formattedLoss = roundedLoss.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  const formattedLoss = new Intl.NumberFormat(LANG_LOCALE[lang], { useGrouping: true }).format(roundedLoss);
 
-  const title = `${categoryName} v ${regionName}: letna izguba €${formattedLoss} | Lime Savings Calculator`;
-  const description = `Letna izguba za ${categoryName} v regiji ${regionName} zaradi no-shows je €${formattedLoss}. Preprečite izpad in prihranite z Lime Booking!`;
+  const title = t.meta.title(categoryName, regionName, formattedLoss);
+  const description = t.meta.description(categoryName, regionName, formattedLoss);
 
   return {
     title,
@@ -34,7 +37,7 @@ export function buildMetadata(state: UrlState) {
           url: "https://lime-booking.com/og-image.png",
           width: 1200,
           height: 630,
-          alt: `${categoryName} v ${regionName} letna izguba`,
+          alt: t.meta.imageAlt(categoryName, regionName),
         },
       ],
     },

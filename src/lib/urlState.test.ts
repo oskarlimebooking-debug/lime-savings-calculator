@@ -7,12 +7,15 @@ import {
   DEFAULT_NOSHOWS,
   DEFAULT_PERIOD,
   DEFAULT_PKG,
+  DEFAULT_LANG_STATE,
   coerceNoShows,
   coerceCustomPrice,
+  coerceAddonQty,
   UrlState,
   SearchParamsInput,
 } from "./urlState";
 import { CATEGORIES, REGIONS, PACKAGES } from "./data";
+import { LANGUAGES } from "./i18n";
 
 describe("URL state serialization and parsing (T2.1)", () => {
   // AC1: parseParams(toQueryString(state)) deep-equals the original valid state (round-trip vitest)
@@ -24,6 +27,7 @@ describe("URL state serialization and parsing (T2.1)", () => {
         noshows: 10,
         period: "monthly",
         pkg: "advanced",
+        lang: "sl",
       },
       {
         category: "brivstvo",
@@ -31,20 +35,23 @@ describe("URL state serialization and parsing (T2.1)", () => {
         noshows: 0,
         period: "weekly",
         pkg: "basic",
+        lang: "en",
       },
       {
         category: "kozmeticni-saloni",
         region: "primorska",
         noshows: 99,
         period: "monthly",
-        pkg: "advanced",
+        pkg: "growth",
+        lang: "hr",
       },
       {
         category: "druge-lepotne-storitve",
         region: "ostalo",
         noshows: 5,
         period: "weekly",
-        pkg: "basic",
+        pkg: "pro",
+        lang: "sr",
       },
       {
         category: "frizerstvo",
@@ -52,7 +59,11 @@ describe("URL state serialization and parsing (T2.1)", () => {
         noshows: 8,
         period: "monthly",
         pkg: "advanced",
+        lang: "sl",
         customPrice: 33.5,
+        extraUsers: 2,
+        extraLocations: 1,
+        extraResources: 3,
       },
     ];
 
@@ -84,6 +95,7 @@ describe("URL state serialization and parsing (T2.1)", () => {
       noshows: DEFAULT_NOSHOWS,
       period: DEFAULT_PERIOD,
       pkg: DEFAULT_PKG,
+      lang: DEFAULT_LANG_STATE,
     };
 
     expect(() => parseParams(null)).not.toThrow();
@@ -114,6 +126,7 @@ describe("URL state serialization and parsing (T2.1)", () => {
       noshows: 0, // "not-a-number" -> 0
       period: DEFAULT_PERIOD, // "daily" is invalid -> default
       pkg: DEFAULT_PKG, // absent -> default
+      lang: DEFAULT_LANG_STATE, // absent -> default
     });
   });
 
@@ -147,6 +160,36 @@ describe("URL state serialization and parsing (T2.1)", () => {
     const withoutPrice = toQueryString({});
     expect(withoutPrice).not.toContain("price=");
     expect(parseParams(withoutPrice).customPrice).toBeUndefined();
+  });
+
+  // AC6: lang param round-trips, falls back to the default (sl) for unknown values, and is
+  // always present in the query string; add-on quantities round-trip and are omitted at 0.
+  test("AC6: lang validation/defaulting and add-on quantity coercion", () => {
+    for (const language of LANGUAGES) {
+      expect(parseParams(`?lang=${language.code}`).lang).toBe(language.code);
+    }
+    expect(parseParams("?lang=xx").lang).toBe(DEFAULT_LANG_STATE);
+    expect(parseParams(null).lang).toBe(DEFAULT_LANG_STATE);
+    expect(toQueryString({})).toContain(`lang=${DEFAULT_LANG_STATE}`);
+
+    expect(coerceAddonQty(3)).toBe(3);
+    expect(coerceAddonQty("3")).toBe(3);
+    expect(coerceAddonQty(0)).toBeUndefined();
+    expect(coerceAddonQty(-2)).toBeUndefined();
+    expect(coerceAddonQty(undefined)).toBeUndefined();
+    expect(coerceAddonQty("not-a-number")).toBeUndefined();
+
+    const withAddons = toQueryString({ extraUsers: 2, extraLocations: 0, extraResources: 1 });
+    expect(withAddons).toContain("extraUsers=2");
+    expect(withAddons).not.toContain("extraLocations=");
+    expect(withAddons).toContain("extraResources=1");
+
+    const parsedAddons = parseParams(withAddons);
+    expect(parsedAddons.extraUsers).toBe(2);
+    expect(parsedAddons.extraLocations).toBeUndefined();
+    expect(parsedAddons.extraResources).toBe(1);
+
+    expect(parseParams(null).extraUsers).toBeUndefined();
   });
 
   // AC3: noshows is coerced to a non-negative integer; negatives/NaN clamp to 0 (asserted)

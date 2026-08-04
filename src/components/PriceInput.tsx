@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { Lang, getTranslations, LANG_LOCALE } from "../lib/i18n";
+import { formatEUR } from "../lib/calc";
 
 interface PriceInputProps {
   /** The effective price currently in use (custom override or region/category default). */
@@ -11,6 +13,7 @@ interface PriceInputProps {
   isCustom: boolean;
   onChange: (price: number) => void;
   onReset: () => void;
+  lang: Lang;
 }
 
 export const PriceInput: React.FC<PriceInputProps> = ({
@@ -19,7 +22,9 @@ export const PriceInput: React.FC<PriceInputProps> = ({
   isCustom,
   onChange,
   onReset,
+  lang,
 }) => {
+  const t = getTranslations(lang);
   const [localString, setLocalString] = useState(value.toString());
 
   useEffect(() => {
@@ -54,7 +59,7 @@ export const PriceInput: React.FC<PriceInputProps> = ({
           htmlFor="price-input-numeric"
           className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider"
         >
-          Povprečna cena termina
+          {t.priceInput.label}
         </label>
         {isCustom && (
           <button
@@ -63,7 +68,7 @@ export const PriceInput: React.FC<PriceInputProps> = ({
             onClick={onReset}
             className="text-xs font-semibold text-lime-700 dark:text-lime-400 hover:underline cursor-pointer"
           >
-            Ponastavi na privzeto ({defaultPrice.toFixed(2).replace(".", ",")} €)
+            {t.priceInput.reset(formatEUR(defaultPrice, LANG_LOCALE[lang]))}
           </button>
         )}
       </div>
@@ -84,9 +89,7 @@ export const PriceInput: React.FC<PriceInputProps> = ({
           </span>
         </div>
         <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
-          {isCustom
-            ? "vaša cena (prilagojeno)"
-            : `privzeto za vašo regijo/panogo`}
+          {isCustom ? t.priceInput.custom : t.priceInput.default}
         </span>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { CATEGORIES, REGIONS, PACKAGES, CategorySlug, RegionSlug, PackageSlug, DEFAULT_PACKAGE_SLUG } from "./data";
 import { Period } from "./calc";
+import { Lang, DEFAULT_LANG, isValidLang } from "./i18n";
 
 export interface UrlState {
   category: CategorySlug;
@@ -7,8 +8,13 @@ export interface UrlState {
   noshows: number;
   period: Period;
   pkg: PackageSlug;
+  lang: Lang;
   /** Optional user-edited average appointment price override (EUR). Undefined uses the category/region default. */
   customPrice?: number;
+  /** Optional add-on quantities (extra users/locations/resources). Undefined/0 means none. */
+  extraUsers?: number;
+  extraLocations?: number;
+  extraResources?: number;
 }
 
 export type SearchParamsInput =
@@ -21,6 +27,7 @@ export const DEFAULT_REGION: RegionSlug = REGIONS[0]?.slug ?? "osrednjeslovenska
 export const DEFAULT_NOSHOWS = 0;
 export const DEFAULT_PERIOD: Period = "monthly";
 export const DEFAULT_PKG: PackageSlug = DEFAULT_PACKAGE_SLUG;
+export const DEFAULT_LANG_STATE: Lang = DEFAULT_LANG;
 
 const VALID_CATEGORIES = new Set<string>(CATEGORIES.map((c) => c.slug));
 const VALID_REGIONS = new Set<string>(REGIONS.map((r) => r.slug));
@@ -58,6 +65,15 @@ export function coerceCustomPrice(val: unknown): number | undefined {
     return Math.round(parsed * 100) / 100;
   }
   return undefined;
+}
+
+/**
+ * Coerces any input value to a non-negative integer add-on quantity, or undefined if
+ * absent/invalid/zero (add-ons default to "none" and are omitted from the URL at 0).
+ */
+export function coerceAddonQty(val: unknown): number | undefined {
+  const n = coerceNoShows(val);
+  return n > 0 ? n : undefined;
 }
 
 /**
@@ -121,8 +137,15 @@ export function parseParams(searchParams: SearchParamsInput | null | undefined):
   const rawPkg = getParamValue(searchParams, "pkg");
   const pkg = rawPkg && VALID_PACKAGES.has(rawPkg) ? (rawPkg as PackageSlug) : DEFAULT_PKG;
 
+  const rawLang = getParamValue(searchParams, "lang");
+  const lang = isValidLang(rawLang) ? rawLang : DEFAULT_LANG_STATE;
+
   const rawCustomPrice = getParamValue(searchParams, "price");
   const customPrice = coerceCustomPrice(rawCustomPrice);
+
+  const extraUsers = coerceAddonQty(getParamValue(searchParams, "extraUsers"));
+  const extraLocations = coerceAddonQty(getParamValue(searchParams, "extraLocations"));
+  const extraResources = coerceAddonQty(getParamValue(searchParams, "extraResources"));
 
   return {
     category,
@@ -130,7 +153,11 @@ export function parseParams(searchParams: SearchParamsInput | null | undefined):
     noshows,
     period,
     pkg,
+    lang,
     ...(customPrice !== undefined ? { customPrice } : {}),
+    ...(extraUsers !== undefined ? { extraUsers } : {}),
+    ...(extraLocations !== undefined ? { extraLocations } : {}),
+    ...(extraResources !== undefined ? { extraResources } : {}),
   };
 }
 
@@ -146,15 +173,29 @@ export function toQueryString(state: Partial<UrlState>): string {
   const noshows = state.noshows !== undefined ? coerceNoShows(state.noshows) : DEFAULT_NOSHOWS;
   const period = state.period ?? DEFAULT_PERIOD;
   const pkg = state.pkg ?? DEFAULT_PKG;
+  const lang = isValidLang(state.lang) ? state.lang : DEFAULT_LANG_STATE;
   const customPrice = coerceCustomPrice(state.customPrice);
+  const extraUsers = coerceAddonQty(state.extraUsers);
+  const extraLocations = coerceAddonQty(state.extraLocations);
+  const extraResources = coerceAddonQty(state.extraResources);
 
   params.set("category", category);
   params.set("region", region);
   params.set("noshows", String(noshows));
   params.set("period", period);
   params.set("pkg", pkg);
+  params.set("lang", lang);
   if (customPrice !== undefined) {
     params.set("price", String(customPrice));
+  }
+  if (extraUsers !== undefined) {
+    params.set("extraUsers", String(extraUsers));
+  }
+  if (extraLocations !== undefined) {
+    params.set("extraLocations", String(extraLocations));
+  }
+  if (extraResources !== undefined) {
+    params.set("extraResources", String(extraResources));
   }
 
   return `?${params.toString()}`;

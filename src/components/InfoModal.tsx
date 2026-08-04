@@ -2,20 +2,22 @@
 
 import React, { useEffect } from "react";
 import { getPackage, PackageSlug } from "../lib/data";
+import { Lang, getTranslations, getPackageText } from "../lib/i18n";
 
 interface InfoModalProps {
   packageSlug: PackageSlug;
   open: boolean;
   onClose: () => void;
+  lang: Lang;
 }
 
-export const InfoTrigger: React.FC<{ onClick: () => void }> = ({ onClick }) => (
+export const InfoTrigger: React.FC<{ onClick: () => void; label?: string }> = ({ onClick, label }) => (
   <button
     id="info-modal-trigger"
     type="button"
     onClick={onClick}
-    aria-label="Od kod izhajajo te številke?"
-    title="Od kod izhajajo te številke?"
+    aria-label={label ?? "Od kod izhajajo te številke?"}
+    title={label ?? "Od kod izhajajo te številke?"}
     className="inline-flex items-center justify-center w-8 h-8 rounded-full text-gray-400 dark:text-gray-500 hover:text-lime-600 dark:hover:text-lime-400 hover:bg-lime-50 dark:hover:bg-lime-950/30 transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-lime-500/50"
   >
     <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
@@ -25,10 +27,14 @@ export const InfoTrigger: React.FC<{ onClick: () => void }> = ({ onClick }) => (
   </button>
 );
 
-export const InfoModal: React.FC<InfoModalProps> = ({ packageSlug, open, onClose }) => {
+export const InfoModal: React.FC<InfoModalProps> = ({ packageSlug, open, onClose, lang }) => {
+  const t = getTranslations(lang);
   const pkg = getPackage(packageSlug);
   const basic = getPackage("basic");
   const advanced = getPackage("advanced");
+  const basicText = getPackageText(basic.slug, basic.name, basic.tagline, basic.features, lang);
+  const advancedText = getPackageText(advanced.slug, advanced.name, advanced.tagline, advanced.features, lang);
+  const pkgText = getPackageText(pkg.slug, pkg.name, pkg.tagline, pkg.features, lang);
 
   useEffect(() => {
     if (!open) return;
@@ -44,6 +50,12 @@ export const InfoModal: React.FC<InfoModalProps> = ({ packageSlug, open, onClose
   }, [open, onClose]);
 
   if (!open) return null;
+
+  const basicPct = Math.round(basic.noShowReduction * 100);
+  const advancedPct = Math.round(advanced.noShowReduction * 100);
+  const pkgPct = Math.round(pkg.noShowReduction * 100);
+  const pkgChannel =
+    pkg.notificationChannel === "sms" ? t.info.smsChannel(pkg.smsCount ?? 0) : t.info.emailChannel;
 
   return (
     <div
@@ -63,7 +75,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({ packageSlug, open, onClose
           id="info-modal-close"
           type="button"
           onClick={onClose}
-          aria-label="Zapri"
+          aria-label={t.info.close}
           className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
@@ -72,80 +84,48 @@ export const InfoModal: React.FC<InfoModalProps> = ({ packageSlug, open, onClose
         </button>
 
         <h2 id="info-modal-title" className="text-xl font-bold text-gray-800 dark:text-gray-100 tracking-tight mb-1">
-          Od kod izhajajo te številke?
+          {t.info.title}
         </h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-          Metodologija in viri za izračun izpada prihodka in prihrankov.
-        </p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">{t.info.subtitle}</p>
 
         <div className="flex flex-col gap-5 text-sm text-gray-600 dark:text-gray-300">
           <section>
-            <h3 className="font-bold text-gray-800 dark:text-gray-100 mb-1.5">
-              Zmanjšanje neudeležb: SMS proti e-pošti
-            </h3>
-            <p className="mb-2">
-              Ne vsi opomniki so enako učinkoviti. SMS ima bistveno višjo stopnjo odprtja
-              (okrog 98&nbsp;%, večina v nekaj minutah) kot e-pošta, zato paketi s SMS
-              opomniki dosledno bolj znižajo delež neudeležb:
-            </p>
+            <h3 className="font-bold text-gray-800 dark:text-gray-100 mb-1.5">{t.info.channelHeading}</h3>
+            <p className="mb-2">{t.info.channelIntro}</p>
             <ul className="flex flex-col gap-1.5">
               <li className="flex items-start gap-2">
                 <span className="mt-1 w-1.5 h-1.5 rounded-full bg-gray-400 flex-shrink-0" />
-                <span>
-                  <strong className="text-gray-800 dark:text-gray-100">{basic.name} (samo e-pošta):</strong>{" "}
-                  ~{Math.round(basic.noShowReduction * 100)}&nbsp;% manj neudeležb — sistematični pregledi
-                  avtomatskih (ne-SMS) opomnikov beležijo zmanjšanje neudeležb za približno
-                  29–30&nbsp;% glede na stanje brez opomnikov.
-                </span>
+                <span>{t.info.basicBullet(basicPct, basicText.name)}</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="mt-1 w-1.5 h-1.5 rounded-full bg-lime-500 flex-shrink-0" />
-                <span>
-                  <strong className="text-gray-800 dark:text-gray-100">{advanced.name} (SMS + e-pošta):</strong>{" "}
-                  ~{Math.round(advanced.noShowReduction * 100)}&nbsp;% manj neudeležb — programi z več
-                  SMS opomnikov (npr. 3-stopenjski opomniki) so v raziskavah znižali neudeležbe tudi
-                  do ~58–60&nbsp;%, kar SMS opomnike uvršča znatno pred opomnike samo po e-pošti.
-                </span>
+                <span>{t.info.advancedBullet(advancedPct, advancedText.name)}</span>
               </li>
             </ul>
-            <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-              Viri: pregledne študije učinkovitosti opomnikov za termine (npr. objave v Journal of
-              Service Management in analize zdravstvenih ter salonskih opomnikovnih sistemov); podatki
-              o stopnjah odprtja SMS sporočil iz panožnih analiz komunikacijskih kanalov.
-            </p>
+            <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">{t.info.sources}</p>
           </section>
 
           <section>
             <h3 className="font-bold text-gray-800 dark:text-gray-100 mb-1.5">
-              Trenutno izbrani paket: {pkg.name}
+              {t.info.currentPackageHeading(pkgText.name)}
             </h3>
-            <p>
-              Izračun prihrankov na tej strani uporablja {Math.round(pkg.noShowReduction * 100)}&nbsp;%
-              stopnjo zmanjšanja neudeležb, ki ustreza opomnikom preko{" "}
-              {pkg.notificationChannel === "sms" ? `SMS-a (${pkg.smsCount}/mesec vključenih) in e-pošte` : "e-pošte"}.
-              Menjava paketa zgoraj samodejno posodobi vse spodnje izračune.
-            </p>
+            <p>{t.info.currentPackageBody(pkgPct, pkgChannel)}</p>
           </section>
 
           <section>
-            <h3 className="font-bold text-gray-800 dark:text-gray-100 mb-1.5">
-              Povprečna cena termina
-            </h3>
-            <p>
-              Privzete cene po panogi in regiji so ocene na podlagi tržnih povprečij v Sloveniji,
-              Hrvaški in Srbiji. Ker se cena termina med saloni precej razlikuje, jo lahko v koraku
-              za regijo poljubno prilagodite — izračun se takoj posodobi.
-            </p>
+            <h3 className="font-bold text-gray-800 dark:text-gray-100 mb-1.5">{t.info.priceHeading}</h3>
+            <p>{t.info.priceBody}</p>
           </section>
 
           <section>
-            <h3 className="font-bold text-gray-800 dark:text-gray-100 mb-1.5">
-              Cena naročnine Lime Booking
-            </h3>
+            <h3 className="font-bold text-gray-800 dark:text-gray-100 mb-1.5">{t.info.subscriptionHeading}</h3>
             <p>
-              Cene paketov ({basic.name}: {basic.monthlyPrice.toFixed(2).replace(".", ",")}&nbsp;€/mesec,{" "}
-              {advanced.name}: {advanced.monthlyPrice.toFixed(2).replace(".", ",")}&nbsp;€/mesec, brez DDV)
-              so povzete po uradnem ceniku na lime-booking.com.
+              {t.info.subscriptionBody(
+                basicText.name,
+                basic.monthlyPrice.toFixed(2).replace(".", ","),
+                advancedText.name,
+                advanced.monthlyPrice.toFixed(2).replace(".", ",")
+              )}
             </p>
           </section>
         </div>

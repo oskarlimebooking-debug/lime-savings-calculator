@@ -1,13 +1,15 @@
 import React from "react";
 import { getRegionOptions } from "../lib/stepHelpers";
 import { RegionSlug } from "../lib/data";
+import { Lang, getRegionName } from "../lib/i18n";
 
 interface RegionPickerProps {
   value: RegionSlug;
   onChange: (value: RegionSlug) => void;
+  lang: Lang;
 }
 
-export const RegionPicker: React.FC<RegionPickerProps> = ({ value, onChange }) => {
+export const RegionPicker: React.FC<RegionPickerProps> = ({ value, onChange, lang }) => {
   const regions = getRegionOptions();
 
   return (
@@ -26,7 +28,7 @@ export const RegionPicker: React.FC<RegionPickerProps> = ({ value, onChange }) =
                 : "border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 bg-white dark:bg-zinc-900 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
             }`}
           >
-            {reg.name}
+            {getRegionName(reg.slug, lang)}
           </button>
         );
       })}
