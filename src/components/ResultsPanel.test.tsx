@@ -9,7 +9,7 @@ describe("ResultsPanel Component Tests", () => {
       monthlyLoss: 120,
       yearlyLoss: 1440,
       yearlySaving: 864,
-      roiMonths: 1.5,
+      roiMonths: 0.5,
       roiTier: "green" as const,
     };
 
@@ -17,22 +17,25 @@ describe("ResultsPanel Component Tests", () => {
 
     // Renders monthly and yearly loss
     // Normalized check to handle potential spacing differences in locale formatting
-    const normalized = markup.replace(/\u00a0/g, " ");
+    const normalized = markup.replace(/ /g, " ");
     expect(normalized).toContain("120,00");
     expect(normalized).toContain("1.440,00");
     expect(normalized).toContain("864,00");
 
-    // Renders the ROI label with correct formatted number (AC2)
-    expect(normalized).toContain("Lime Booking se povrne v 1,5 mesecih");
+    // Renders the ROI label in days, converted from months (0.5 months x 30 = 15 days) (AC2)
+    expect(normalized).toContain("Lime Booking se povrne v 15 dneh");
 
     // Renders the green tier class name (AC3)
     expect(markup).toContain("lime-green");
+
+    // Green tier does not render the honest "doesn't pay off yet" value-add callout
+    expect(markup).not.toContain('id="results-value-add"');
 
     // Renders the default footnote text (AC4)
     expect(markup).toContain("Zmanjšanje neudeležb za 60 %");
   });
 
-  test("renders warning tier layout and custom footnote", () => {
+  test("renders warning tier layout, honest ROI copy, value-add callout, and custom footnote", () => {
     const props = {
       monthlyLoss: 0,
       yearlyLoss: 0,
@@ -43,13 +46,23 @@ describe("ResultsPanel Component Tests", () => {
     };
 
     const markup = renderToStaticMarkup(React.createElement(ResultsPanel, props));
-    const normalized = markup.replace(/\u00a0/g, " ");
+    const normalized = markup.replace(/ /g, " ");
 
-    // Renders dash for infinity months (AC2 / AC3)
-    expect(normalized).toContain("Lime Booking se povrne v - mesecih");
+    // Renders dash for infinity days (AC2 / AC3)
+    expect(normalized).toContain("Lime Booking se povrne v - dneh");
 
     // Renders the warning class name (AC3)
     expect(markup).toContain("warning");
+
+    // Warning tier is honest that the subscription doesn't pay off within 30 days
+    // and suggests a smaller package
+    expect(markup).toContain("30 dneh");
+    expect(markup).toContain("manjši paket");
+
+    // Renders the value-add callout (new customer acquisition, platform listing)
+    expect(markup).toContain('id="results-value-add"');
+    expect(markup).toContain("Lime Booking prinaša še več");
+    expect(markup).toContain("pridobivanju novih strank");
 
     // Renders custom footnote (AC4)
     expect(markup).toContain("Custom study source footnote");

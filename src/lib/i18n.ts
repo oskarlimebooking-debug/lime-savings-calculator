@@ -270,9 +270,11 @@ export interface Translations {
     yearlyLoss: string;
     yearlySaving: string;
     savingAssumption: (pct: number) => string;
-    roiLabel: (months: string) => string;
+    roiLabel: (days: string) => string;
     roiGreen: string;
     roiWarning: string;
+    valueAddHeading: string;
+    valueAddText: string;
   };
   chart: {
     heading: string;
@@ -377,9 +379,13 @@ const sl: Translations = {
     yearlyLoss: "Letni izpad prihodka",
     yearlySaving: "Letni prihranek z Lime Booking",
     savingAssumption: (pct) => `Ob predpostavki ${pct} % zmanjšanja števila neudeležb z avtomatskimi opomniki.`,
-    roiLabel: (months) => `Lime Booking se povrne v ${months} mesecih`,
+    roiLabel: (days) => `Lime Booking se povrne v ${days} dneh`,
     roiGreen: "Izjemno hitra povrnitev investicije!",
-    roiWarning: "Povrnitev investicije na podlagi trenutnih nastavitev.",
+    roiWarning:
+      "Ob trenutnih nastavitvah se naročnina ne povrne v 30 dneh zgolj s prihrankom pri neudeležbah — morda je smiselnejši manjši paket.",
+    valueAddHeading: "Lime Booking prinaša še več",
+    valueAddText:
+      "Poleg zmanjšanja neudeležb vam Lime Booking pomaga tudi pri pridobivanju novih strank in objavi vašega podjetja na platformi Lime Booking, kar dodatno poveča vrednost naročnine.",
   },
   chart: {
     heading: "Izpad prihodka: brez in z Lime Booking",
@@ -485,9 +491,13 @@ const hr: Translations = {
     yearlyLoss: "Godišnji gubitak prihoda",
     yearlySaving: "Godišnja ušteda s Lime Booking",
     savingAssumption: (pct) => `Uz pretpostavku smanjenja broja izostanaka za ${pct} % putem automatskih podsjetnika.`,
-    roiLabel: (months) => `Lime Booking se isplati za ${months} mjeseci`,
+    roiLabel: (days) => `Lime Booking se isplati za ${days} dana`,
     roiGreen: "Iznimno brz povrat ulaganja!",
-    roiWarning: "Povrat ulaganja na temelju trenutnih postavki.",
+    roiWarning:
+      "Uz trenutne postavke pretplata se ne isplati unutar 30 dana samo na temelju uštede od izostanaka — možda je smisleniji manji paket.",
+    valueAddHeading: "Lime Booking donosi još više",
+    valueAddText:
+      "Osim smanjenja izostanaka, Lime Booking vam pomaže i u pridobivanju novih klijenata te objavi vaše tvrtke na platformi Lime Booking, što dodatno povećava vrijednost pretplate.",
   },
   chart: {
     heading: "Gubitak prihoda: bez i s Lime Booking",
@@ -593,9 +603,13 @@ const sr: Translations = {
     yearlyLoss: "Godišnji gubitak prihoda",
     yearlySaving: "Godišnja ušteda sa Lime Booking",
     savingAssumption: (pct) => `Uz pretpostavku smanjenja broja izostanaka za ${pct} % putem automatskih podsetnika.`,
-    roiLabel: (months) => `Lime Booking se isplati za ${months} meseci`,
+    roiLabel: (days) => `Lime Booking se isplati za ${days} dana`,
     roiGreen: "Izuzetno brz povraćaj ulaganja!",
-    roiWarning: "Povraćaj ulaganja na osnovu trenutnih podešavanja.",
+    roiWarning:
+      "Uz trenutna podešavanja pretplata se ne isplati u roku od 30 dana samo na osnovu uštede od neizvršenih dolazaka — možda je smisleniji manji paket.",
+    valueAddHeading: "Lime Booking donosi još više",
+    valueAddText:
+      "Osim smanjenja neizvršenih dolazaka, Lime Booking vam pomaže i u pridobijanju novih klijenata i objavi vašeg biznisa na platformi Lime Booking, što dodatno povećava vrednost pretplate.",
   },
   chart: {
     heading: "Gubitak prihoda: bez i sa Lime Booking",
@@ -701,9 +715,13 @@ const en: Translations = {
     yearlyLoss: "Yearly revenue loss",
     yearlySaving: "Yearly savings with Lime Booking",
     savingAssumption: (pct) => `Assuming a ${pct} % reduction in no-shows from automated reminders.`,
-    roiLabel: (months) => `Lime Booking pays for itself in ${months} months`,
+    roiLabel: (days) => `Lime Booking pays for itself in ${days} days`,
     roiGreen: "Exceptionally fast return on investment!",
-    roiWarning: "Return on investment based on your current settings.",
+    roiWarning:
+      "At your current settings, the subscription doesn't pay for itself within 30 days from no-show savings alone — a smaller plan might make more sense.",
+    valueAddHeading: "Lime Booking brings more value",
+    valueAddText:
+      "Beyond reducing no-shows, Lime Booking also helps you win new customers and list your business on the Lime Booking platform, adding further value to your subscription.",
   },
   chart: {
     heading: "Revenue loss: without vs. with Lime Booking",

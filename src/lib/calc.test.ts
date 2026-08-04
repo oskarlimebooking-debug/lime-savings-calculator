@@ -55,11 +55,12 @@ describe("Pure calculation engine tests", () => {
     expect(calculateRoiMonths(-5)).toBe(Infinity);
   });
 
-  // AC4: roiTier returns 'green' for roiMonths < 2 and 'warning' for ≥ 2 (boundary tested at 2)
+  // AC4: roiTier returns 'green' for a payback of 30 days or less (roiMonths <= 1)
+  // and 'warning' once it takes more than 30 days (boundary tested at 1 month / 30 days)
   test("AC4: roiTier boundary and partitioning behavior", () => {
-    expect(roiTier(1.99)).toBe("green");
-    expect(roiTier(2)).toBe("warning");
-    expect(roiTier(2.01)).toBe("warning");
+    expect(roiTier(0.99)).toBe("green");
+    expect(roiTier(1)).toBe("green");
+    expect(roiTier(1.01)).toBe("warning");
     expect(roiTier(0)).toBe("green");
     expect(roiTier(Infinity)).toBe("warning");
   });
@@ -102,9 +103,11 @@ describe("Pure calculation engine tests", () => {
     expect(formattedLarge).toMatch(/12\.345,67\s*€/);
   });
 
-  // AC2: roiLabel(state) helper returns the expected "…v X mesecih" string and the correct tier for sampled inputs (asserted)
+  // AC2: roiLabel(state) helper returns the expected "…v X dneh" string and the correct tier for sampled inputs (asserted)
   test("AC2: roiLabel returns expected text and correct tier for sampled inputs", () => {
     // Sample 1: High no-shows, quick ROI (tier: green)
+    // frizerstvo/osrednjeslovenska price = 45. 5 no-shows/week ≈ 21.65/month.
+    // monthlySaving = 21.65 × 45 × 0.6 = 584.55/month. roiMonths = 29.90 / 584.55 ≈ 0.051 (≈1.5 days, well under 30).
     const stateGreen = {
       category: "frizerstvo",
       region: "osrednjeslovenska",
@@ -113,7 +116,7 @@ describe("Pure calculation engine tests", () => {
     };
     const resGreen = roiLabel(stateGreen);
     expect(resGreen.label).toContain("Lime Booking se povrne v");
-    expect(resGreen.label).toContain("mesecih");
+    expect(resGreen.label).toContain("dneh");
     expect(resGreen.tier).toBe("green");
 
     // Sample 2: Zero no-shows, Infinity ROI (tier: warning)
@@ -124,49 +127,28 @@ describe("Pure calculation engine tests", () => {
       period: "monthly" as const,
     };
     const resZero = roiLabel(stateZero);
-    expect(resZero.label).toBe("Lime Booking se povrne v - mesecih");
+    expect(resZero.label).toBe("Lime Booking se povrne v - dneh");
     expect(resZero.tier).toBe("warning");
 
-    // Sample 3: Low no-shows, slower ROI (tier: warning if roi >= 2)
-    // Let's verify boundary behavior or a case that is warning.
-    // For 1 no-show per month in brivstvo, ostalo: price = 18.
-    // Monthly loss = 18. Yearly loss = 216. Saving = 216 * 0.6 = 129.6. Monthly saving = 10.80.
-    // roiMonths = 14.90 / 10.80 = 1.379 (green, < 2)
-    // Let's find a case where roi >= 2:
-    // If noShows = 0.5 per month, wait, noshows is integer, let's try 1 no-show per month in a very cheap setting or weekly/monthly.
-    // Let's compute saving for 1 no-show per month in rs brivstvo: price = 15.
-    // Monthly saving = 15 * 0.6 = 9. Monthly saving = 9.
-    // roiMonths = 14.9 / 9 = 1.65 (still < 2)
-    // How about if noShows is very low? What if we have a custom price or calculation?
-    // In our system, if noshows = 0, saving = 0, roi = Infinity (warning).
-    // Is there a case with finite roi >= 2?
-    // If brivstvo in rs has 1 no-show per month, price = 15.
-    // wait, monthly saving = 15 * 0.6 = 9.
-    // what if price is smaller? But price is at least 15 (rs brivstvo).
-    // So the minimum positive monthly saving is for 1 no-show/month in rs brivstvo, which gives 9.
-    // So maximum finite roi is 14.9 / 9 = 1.65 months.
-    // Wait, are there other options?
-    // Yes! If we have period = "weekly", 1 no-show/week is 4.33/month.
-    // What if period is "monthly" and we have 1 no-show/month? That gives 1 no-show/month, monthly saving = price * 0.6.
-    // Wait, since LIME_MONTHLY_PRICE = 14.90, if price * 0.6 < 7.45 (i.e. price < 12.41), then roiMonths > 2.
-    // But all prices in data.ts are >= 15.
-    // Wait! This means for all valid positive integer inputs (noshows >= 1), the ROI is always < 2 months!
-    // Let's check:
-    // If price is 15 (minimum price in rs brivstvo), and noshows = 1 (monthly):
-    // monthlySaving = 1 * 15 * 0.6 = 9.
-    // roiMonths = 14.90 / 9 = 1.65 months (< 2, green).
-    // If noshows = 0 (monthly):
-    // monthlySaving = 0.
-    // roiMonths = Infinity (>= 2, warning).
-    // So indeed, the only two possible tiers for actual valid inputs in the app are "green" (when noshows >= 1) and "warning" (when noshows = 0).
-    // Let's check if this is correct. Yes! This is a great insight about the pricing model.
+    // Sample 3: Low no-shows in the cheapest category/region (tier: warning, payback > 30 days)
+    // brivstvo/rs price = 15 (the cheapest in the pricing table). 1 no-show/month:
+    // monthlySaving = 1 × 15 × 0.6 = 9/month. roiMonths = 29.90 / 9 ≈ 3.32 (≈ 99.7 days, well over 30).
+    const stateWarningFinite = {
+      category: "brivstvo",
+      region: "rs",
+      noshows: 1,
+      period: "monthly" as const,
+    };
+    const resWarningFinite = roiLabel(stateWarningFinite);
+    expect(resWarningFinite.label).toBe("Lime Booking se povrne v 100 dneh");
+    expect(resWarningFinite.tier).toBe("warning");
   });
 
-  // AC3: A helper maps roiMonths to the lime-* (green) vs warning class — asserted at boundary 2
-  test("AC3: getRoiClass boundary assertions at 2", () => {
-    expect(getRoiClass(1.99)).toBe("lime-green");
-    expect(getRoiClass(2)).toBe("warning");
-    expect(getRoiClass(2.01)).toBe("warning");
+  // AC3: A helper maps roiMonths to the lime-* (green) vs warning class — asserted at the 30-day boundary (roiMonths === 1)
+  test("AC3: getRoiClass boundary assertions at 30 days (1 month)", () => {
+    expect(getRoiClass(0.99)).toBe("lime-green");
+    expect(getRoiClass(1)).toBe("lime-green");
+    expect(getRoiClass(1.01)).toBe("warning");
     expect(getRoiClass(0)).toBe("lime-green");
     expect(getRoiClass(Infinity)).toBe("warning");
   });
