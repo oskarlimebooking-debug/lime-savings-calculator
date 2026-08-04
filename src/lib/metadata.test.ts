@@ -12,6 +12,7 @@ describe("Dynamic SEO metadata (T2.2)", () => {
       region: "osrednjeslovenska",
       noshows: 10,
       period: "monthly",
+      pkg: "advanced",
     };
     // Expected yearly loss: 10 * 45 (price) = 450 monthly; 450 * 12 = 5400 yearly
     const meta1 = buildMetadata(state1);
@@ -23,6 +24,7 @@ describe("Dynamic SEO metadata (T2.2)", () => {
       region: "celjska",
       noshows: 3,
       period: "weekly",
+      pkg: "basic",
     };
     // Expected monthly no-shows: 3 * 4.33 = 12.99
     // Expected monthly loss: 12.99 * 20 (price) = 259.8
@@ -38,6 +40,7 @@ describe("Dynamic SEO metadata (T2.2)", () => {
       region: "maribor",
       noshows: 5,
       period: "monthly",
+      pkg: "advanced",
     };
     const meta = buildMetadata(state);
 
@@ -58,6 +61,7 @@ describe("Dynamic SEO metadata (T2.2)", () => {
           region: region.slug,
           noshows: 999999, // Extremely large number of no-shows to maximize characters
           period: "weekly",
+          pkg: "advanced",
         };
         const meta = buildMetadata(state);
         expect(meta.description.length).toBeLessThanOrEqual(160);

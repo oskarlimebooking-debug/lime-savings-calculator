@@ -1,4 +1,4 @@
-import { NOSHOW_REDUCTION, LIME_MONTHLY_PRICE, getPrice } from "./data";
+import { NOSHOW_REDUCTION, LIME_MONTHLY_PRICE, getPrice, getPackage, DEFAULT_PACKAGE_SLUG, PackageSlug } from "./data";
 
 export type Period = "weekly" | "monthly";
 
@@ -31,10 +31,10 @@ export function calculateYearlyLoss(monthlyLoss: number): number {
 
 /**
  * Computes yearly saving.
- * `yearlySaving = yearlyLoss × NOSHOW_REDUCTION`
+ * `yearlySaving = yearlyLoss × noShowReduction` (defaults to the Advanced/SMS package's rate)
  */
-export function calculateYearlySaving(yearlyLoss: number): number {
-  return yearlyLoss * NOSHOW_REDUCTION;
+export function calculateYearlySaving(yearlyLoss: number, noShowReduction: number = NOSHOW_REDUCTION): number {
+  return yearlyLoss * noShowReduction;
 }
 
 /**
@@ -47,14 +47,14 @@ export function calculateMonthlySaving(yearlySaving: number): number {
 
 /**
  * Computes return on investment in months.
- * `roiMonths = LIME_MONTHLY_PRICE / monthlySaving`
+ * `roiMonths = packagePrice / monthlySaving` (packagePrice defaults to the Advanced/SMS package's price)
  * Returns Infinity if monthlySaving is 0 or less (guarding divide-by-zero).
  */
-export function calculateRoiMonths(monthlySaving: number): number {
+export function calculateRoiMonths(monthlySaving: number, packagePrice: number = LIME_MONTHLY_PRICE): number {
   if (monthlySaving <= 0) {
     return Infinity;
   }
-  return LIME_MONTHLY_PRICE / monthlySaving;
+  return packagePrice / monthlySaving;
 }
 
 /**
@@ -76,18 +76,22 @@ export interface CalculationResult {
 
 /**
  * Computes all savings metrics.
+ * `packageSlug` selects which Lime Booking package's no-show reduction rate and monthly
+ * price to use for the saving/ROI calculation (defaults to the Advanced/SMS package).
  */
 export function calculateSavings(
   noShows: number,
   period: Period,
-  price: number
+  price: number,
+  packageSlug: PackageSlug = DEFAULT_PACKAGE_SLUG
 ): CalculationResult {
+  const pkg = getPackage(packageSlug);
   const noShowsPerMonth = normalizeNoShows(noShows, period);
   const monthlyLoss = calculateMonthlyLoss(noShowsPerMonth, price);
   const yearlyLoss = calculateYearlyLoss(monthlyLoss);
-  const yearlySaving = calculateYearlySaving(yearlyLoss);
+  const yearlySaving = calculateYearlySaving(yearlyLoss, pkg.noShowReduction);
   const monthlySaving = calculateMonthlySaving(yearlySaving);
-  const roiMonths = calculateRoiMonths(monthlySaving);
+  const roiMonths = calculateRoiMonths(monthlySaving, pkg.monthlyPrice);
   const tier = roiTier(roiMonths);
 
   return {
@@ -139,14 +143,18 @@ export interface RoiLabelState {
   region: string;
   noshows: number;
   period: Period;
+  /** Optional package slug (defaults to the Advanced/SMS package). */
+  packageSlug?: PackageSlug;
+  /** Optional override for the average appointment price (defaults to the category/region price). */
+  price?: number;
 }
 
 /**
  * Computes the ROI text and tier for a given state.
  */
 export function roiLabel(state: RoiLabelState): { label: string; tier: "green" | "warning" } {
-  const price = getPrice(state.category, state.region);
-  const result = calculateSavings(state.noshows, state.period, price);
+  const price = state.price ?? getPrice(state.category, state.region);
+  const result = calculateSavings(state.noshows, state.period, price, state.packageSlug);
   const formatted = getRoiLabelMonths(result.roiMonths);
   return {
     label: `Lime Booking se povrne v ${formatted} mesecih`,
@@ -154,4 +162,17 @@ export function roiLabel(state: RoiLabelState): { label: string; tier: "green" |
   };
 }
 
-export const FOOTNOTE_TEXT = "Zmanjšanje neudeležb za 60 % temelji na industrijskih študijah o digitalnih rezervacijah (npr. Journal of Service Management, 2022). Cena naročnine Lime Booking (14,90 €/mesec brez DDV) temelji na osnovnem paketu za samostojne/mikro salone na limebooking.si.";
+/**
+ * Builds the source footnote text for a given package.
+ */
+export function buildFootnoteText(packageSlug: PackageSlug = DEFAULT_PACKAGE_SLUG): string {
+  const pkg = getPackage(packageSlug);
+  const reductionPct = Math.round(pkg.noShowReduction * 100);
+  const channelText =
+    pkg.notificationChannel === "sms"
+      ? `SMS in e-poštnih opomnikov (${pkg.smsCount}/mesec vključenih)`
+      : "e-poštnih opomnikov";
+  return `Zmanjšanje neudeležb za ${reductionPct} % (paket ${pkg.name}) temelji na študijah učinkovitosti ${channelText} pri zmanjševanju neudeležb na terminih (glej vir "i" spodaj). Cena naročnine Lime Booking (${pkg.monthlyPrice.toFixed(2).replace(".", ",")} €/mesec brez DDV) temelji na uradnem ceniku na lime-booking.com.`;
+}
+
+export const FOOTNOTE_TEXT = buildFootnoteText(DEFAULT_PACKAGE_SLUG);

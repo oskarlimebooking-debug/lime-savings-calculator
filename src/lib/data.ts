@@ -1,20 +1,79 @@
 /**
- * The reduction rate of no-shows when using Lime Booking.
- * Based on industry studies indicating digital booking systems reduce no-shows by up to 70%.
- * Source: Journal of Service Management, 2022 (general industry benchmark for digital bookings).
- */
-export const NOSHOW_REDUCTION = 0.6;
-
-/**
- * The monthly subscription price for the basic Lime Booking package (in EUR).
- * Source: Official pricing page of limebooking.si (lowest full price package for solo/micro salons is €14.90/month without VAT).
- */
-export const LIME_MONTHLY_PRICE = 14.90;
-
-/**
  * The official Lime Booking URL.
  */
-export const LIME_BOOKING_URL = "https://limebooking.si";
+export const LIME_BOOKING_URL = "https://lime-booking.com";
+
+export interface Package {
+  slug: "basic" | "advanced";
+  name: string;
+  /** Monthly subscription price in EUR, billed monthly, excl. VAT. */
+  monthlyPrice: number;
+  /** Estimated no-show reduction rate achieved with this package's reminder channel. */
+  noShowReduction: number;
+  notificationChannel: "email" | "sms";
+  /** Included SMS reminders per month, or null for email-only packages. */
+  smsCount: number | null;
+  tagline: string;
+}
+
+/**
+ * Lime Booking subscription packages and their estimated no-show reduction rates.
+ * Prices and feature sets sourced from the official pricing page (lime-booking.com/pricing).
+ *
+ * Reduction rates are differentiated by reminder channel, based on reminder-effectiveness
+ * research:
+ * - Basic sends e-mail-only reminders. Systematic reviews of automated (non-SMS) appointment
+ *   reminder interventions report no-show reductions of roughly 29-30% versus no reminder.
+ * - Advanced adds SMS reminders (150/month included). SMS has ~98% open rates, most read within
+ *   minutes, and multi-touch SMS reminder programs are documented to cut no-shows by up to ~58-60%,
+ *   meaningfully outperforming e-mail-only reminders.
+ * See the in-app "i" info panel for the full source list.
+ */
+export const PACKAGES: readonly Package[] = [
+  {
+    slug: "basic",
+    name: "Basic",
+    monthlyPrice: 14.90,
+    noShowReduction: 0.3,
+    notificationChannel: "email",
+    smsCount: null,
+    tagline: "E-poštni opomniki",
+  },
+  {
+    slug: "advanced",
+    name: "Advanced",
+    monthlyPrice: 29.90,
+    noShowReduction: 0.6,
+    notificationChannel: "sms",
+    smsCount: 150,
+    tagline: "SMS + e-poštni opomniki",
+  },
+] as const;
+
+export type PackageSlug = typeof PACKAGES[number]["slug"];
+
+export const DEFAULT_PACKAGE_SLUG: PackageSlug = "advanced";
+
+/**
+ * Returns the package for a given slug, falling back to the default package
+ * (Advanced) for unknown/invalid slugs.
+ */
+export function getPackage(slug: string): Package {
+  return PACKAGES.find((p) => p.slug === slug) ?? getPackage(DEFAULT_PACKAGE_SLUG);
+}
+
+export const DEFAULT_PACKAGE: Package = PACKAGES.find((p) => p.slug === DEFAULT_PACKAGE_SLUG)!;
+
+/**
+ * The no-show reduction rate of the default (Advanced/SMS) package.
+ * Kept as a standalone constant for callers that don't need a specific package.
+ */
+export const NOSHOW_REDUCTION = DEFAULT_PACKAGE.noShowReduction;
+
+/**
+ * The monthly subscription price of the default (Advanced/SMS) package, in EUR.
+ */
+export const LIME_MONTHLY_PRICE = DEFAULT_PACKAGE.monthlyPrice;
 
 export interface Category {
   slug: string;

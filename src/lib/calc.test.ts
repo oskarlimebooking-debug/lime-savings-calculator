@@ -11,9 +11,10 @@ import {
   formatEUR,
   getRoiClass,
   roiLabel,
+  buildFootnoteText,
   FOOTNOTE_TEXT,
 } from "./calc";
-import { LIME_MONTHLY_PRICE, NOSHOW_REDUCTION } from "./data";
+import { LIME_MONTHLY_PRICE, NOSHOW_REDUCTION, PACKAGES } from "./data";
 
 describe("Pure calculation engine tests", () => {
   // AC1: Weekly input of 5 with price 30 yields monthlyLoss ≈ 649.5 and yearlyLoss ≈ 7794 (vitest, tolerance ±0.5)
@@ -171,10 +172,32 @@ describe("Pure calculation engine tests", () => {
   });
 
   // AC4: Source footnote text is present in the rendered output helper/props (asserted non-empty string)
-  test("AC4: FOOTNOTE_TEXT is a non-empty string", () => {
+  test("AC4: FOOTNOTE_TEXT is a non-empty string referencing the default package and the live domain", () => {
     expect(typeof FOOTNOTE_TEXT).toBe("string");
     expect(FOOTNOTE_TEXT.length).toBeGreaterThan(0);
-    expect(FOOTNOTE_TEXT).toContain("Journal of Service Management");
-    expect(FOOTNOTE_TEXT).toContain("limebooking.si");
+    expect(FOOTNOTE_TEXT).toContain("60 %");
+    expect(FOOTNOTE_TEXT).toContain("Advanced");
+    expect(FOOTNOTE_TEXT).toContain("lime-booking.com");
+    expect(FOOTNOTE_TEXT).not.toContain("limebooking.si");
+  });
+
+  // AC5: buildFootnoteText differentiates the Basic (email-only) and Advanced (SMS) packages
+  test("AC5: buildFootnoteText reflects each package's reduction rate and channel", () => {
+    const basicText = buildFootnoteText("basic");
+    const advancedText = buildFootnoteText("advanced");
+
+    const basicPkg = PACKAGES.find((p) => p.slug === "basic")!;
+    const advancedPkg = PACKAGES.find((p) => p.slug === "advanced")!;
+
+    expect(basicText).toContain(`${Math.round(basicPkg.noShowReduction * 100)} %`);
+    expect(basicText).toContain("Basic");
+    expect(basicText).not.toContain("SMS");
+
+    expect(advancedText).toContain(`${Math.round(advancedPkg.noShowReduction * 100)} %`);
+    expect(advancedText).toContain("Advanced");
+    expect(advancedText).toContain("SMS");
+
+    // Unknown package slugs fall back to the default (Advanced) package's text
+    expect(buildFootnoteText(undefined)).toBe(advancedText);
   });
 });
