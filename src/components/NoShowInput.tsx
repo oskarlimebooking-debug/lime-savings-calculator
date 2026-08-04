@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Period } from "../lib/calc";
 import { clampNoShows, convertNoShowsPeriod, NO_SHOW_LIMITS } from "../lib/stepHelpers";
+import { Lang, getTranslations } from "../lib/i18n";
 
 interface NoShowInputProps {
   value: number;
   period: Period;
   onChange: (value: number) => void;
   onPeriodChange: (period: Period) => void;
+  lang: Lang;
 }
 
 export const NoShowInput: React.FC<NoShowInputProps> = ({
@@ -14,7 +16,9 @@ export const NoShowInput: React.FC<NoShowInputProps> = ({
   period,
   onChange,
   onPeriodChange,
+  lang,
 }) => {
+  const t = getTranslations(lang);
   const limits = NO_SHOW_LIMITS[period];
   const [localString, setLocalString] = useState(value.toString());
 
@@ -69,7 +73,7 @@ export const NoShowInput: React.FC<NoShowInputProps> = ({
         {/* Weekly/Monthly Period Selector */}
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-            Obdobje izpadov
+            {t.noShowInput.periodLabel}
           </label>
           <div className="bg-gray-100 dark:bg-zinc-800/80 p-1 rounded-xl flex gap-1 w-full max-w-[240px]">
             <button
@@ -82,7 +86,7 @@ export const NoShowInput: React.FC<NoShowInputProps> = ({
                   : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
               }`}
             >
-              Tedensko
+              {t.noShowInput.weekly}
             </button>
             <button
               id="period-toggle-monthly"
@@ -94,7 +98,7 @@ export const NoShowInput: React.FC<NoShowInputProps> = ({
                   : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
               }`}
             >
-              Mesečno
+              {t.noShowInput.monthly}
             </button>
           </div>
         </div>
@@ -105,7 +109,7 @@ export const NoShowInput: React.FC<NoShowInputProps> = ({
             htmlFor="noshow-input-numeric"
             className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider"
           >
-            Število neudeležb
+            {t.noShowInput.countLabel}
           </label>
           <div className="flex items-center gap-3">
             <input
@@ -119,7 +123,7 @@ export const NoShowInput: React.FC<NoShowInputProps> = ({
               className="w-24 px-3 py-2.5 text-center font-bold text-lg border border-gray-200 dark:border-gray-800 rounded-xl bg-white dark:bg-zinc-900 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-lime-500/40 focus:border-lime-500 transition-all duration-200"
             />
             <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
-              {period === "weekly" ? "na teden" : "na mesec"}
+              {period === "weekly" ? t.noShowInput.perWeek : t.noShowInput.perMonth}
             </span>
           </div>
         </div>

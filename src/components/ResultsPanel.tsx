@@ -2,6 +2,8 @@ import React from "react";
 import { formatEUR, getRoiClass, getRoiLabelMonths, FOOTNOTE_TEXT } from "../lib/calc";
 import { SavingsChart } from "./SavingsChart";
 import { InfoTrigger } from "./InfoModal";
+import { AutoFitAmount } from "./AutoFitAmount";
+import { Lang, DEFAULT_LANG, getTranslations, LANG_LOCALE } from "../lib/i18n";
 
 export interface ResultsPanelProps {
   monthlyLoss: number;
@@ -13,6 +15,7 @@ export interface ResultsPanelProps {
   /** Percentage (0-1) of no-show reduction assumed for the currently selected package. */
   noShowReduction?: number;
   onInfoClick?: () => void;
+  lang?: Lang;
 }
 
 export const ResultsPanel: React.FC<ResultsPanelProps> = ({
@@ -24,9 +27,12 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
   footnote = FOOTNOTE_TEXT,
   noShowReduction = 0.6,
   onInfoClick,
+  lang = DEFAULT_LANG,
 }) => {
+  const t = getTranslations(lang);
+  const locale = LANG_LOCALE[lang];
   const roiClass = getRoiClass(roiMonths);
-  const formattedRoi = getRoiLabelMonths(roiMonths);
+  const formattedRoi = getRoiLabelMonths(roiMonths, locale);
   const reductionPct = Math.round(noShowReduction * 100);
 
   return (
@@ -37,13 +43,11 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center gap-1.5">
           <h2 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-gray-100 tracking-tight">
-            Izračun izpada in prihrankov
+            {t.results.heading}
           </h2>
-          {onInfoClick && <InfoTrigger onClick={onInfoClick} />}
+          {onInfoClick && <InfoTrigger onClick={onInfoClick} label={t.info.triggerLabel} />}
         </div>
-        <p className="text-sm text-gray-400 dark:text-gray-500">
-          Pregled finančnih učinkov neudeležb in potenciala za izboljšanje.
-        </p>
+        <p className="text-sm text-gray-400 dark:text-gray-500">{t.results.subheading}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
@@ -51,30 +55,30 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
         <div className="bg-gray-50/50 dark:bg-zinc-800/20 border border-gray-100 dark:border-zinc-800/50 rounded-2xl p-5 flex flex-col gap-4">
           <div className="flex flex-col">
             <span className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
-              Mesečni izpad prihodka
+              {t.results.monthlyLoss}
             </span>
-            <span
-              key={monthlyLoss}
-              id="results-monthly-loss"
-              className="text-2xl md:text-3xl font-extrabold text-gray-800 dark:text-gray-100 mt-1.5 inline-block popIn"
-            >
-              {formatEUR(monthlyLoss)}
-            </span>
+            <div key={monthlyLoss} className="mt-1.5">
+              <AutoFitAmount
+                id="results-monthly-loss"
+                text={formatEUR(monthlyLoss, locale)}
+                className="text-2xl md:text-3xl font-extrabold text-gray-800 dark:text-gray-100 popIn"
+              />
+            </div>
           </div>
 
           <div className="h-px bg-gray-100 dark:bg-zinc-800/50 w-full" />
 
           <div className="flex flex-col">
             <span className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
-              Letni izpad prihodka
+              {t.results.yearlyLoss}
             </span>
-            <span
-              key={yearlyLoss}
-              id="results-yearly-loss"
-              className="text-2xl md:text-3xl font-extrabold text-gray-800 dark:text-gray-100 mt-1.5 inline-block popIn"
-            >
-              {formatEUR(yearlyLoss)}
-            </span>
+            <div key={yearlyLoss} className="mt-1.5">
+              <AutoFitAmount
+                id="results-yearly-loss"
+                text={formatEUR(yearlyLoss, locale)}
+                className="text-2xl md:text-3xl font-extrabold text-gray-800 dark:text-gray-100 popIn"
+              />
+            </div>
           </div>
         </div>
 
@@ -82,17 +86,17 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
         <div className="bg-lime-50/30 dark:bg-lime-950/5 border border-lime-100/50 dark:border-lime-900/20 rounded-2xl p-5 flex flex-col justify-between gap-4">
           <div className="flex flex-col">
             <span className="text-xs font-bold text-lime-700 dark:text-lime-500 uppercase tracking-wider">
-              Letni prihranek z Lime Booking
+              {t.results.yearlySaving}
             </span>
-            <span
-              key={yearlySaving}
-              id="results-yearly-saving"
-              className="text-3xl md:text-4xl font-black text-lime-600 dark:text-lime-400 mt-1.5 inline-block popIn"
-            >
-              {formatEUR(yearlySaving)}
-            </span>
+            <div key={yearlySaving} className="mt-1.5">
+              <AutoFitAmount
+                id="results-yearly-saving"
+                text={formatEUR(yearlySaving, locale)}
+                className="text-3xl md:text-4xl font-black text-lime-600 dark:text-lime-400 popIn"
+              />
+            </div>
             <p className="text-xs text-lime-700/70 dark:text-lime-500/70 mt-2 font-medium">
-              Ob predpostavki {reductionPct} % zmanjšanja števila neudeležb z avtomatskimi opomniki.
+              {t.results.savingAssumption(reductionPct)}
             </p>
           </div>
         </div>
@@ -152,7 +156,7 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
                   : "text-amber-800 dark:text-amber-300"
               }`}
             >
-              Lime Booking se povrne v {formattedRoi} mesecih
+              {t.results.roiLabel(formattedRoi)}
             </span>
             <p
               className={`text-xs mt-0.5 font-medium ${
@@ -161,9 +165,7 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
                   : "text-amber-700/80 dark:text-amber-400/70"
               }`}
             >
-              {roiTier === "green"
-                ? "Izjemno hitra povrnitev investicije!"
-                : "Povrnitev investicije na podlagi trenutnih nastavitev."}
+              {roiTier === "green" ? t.results.roiGreen : t.results.roiWarning}
             </p>
           </div>
         </div>
@@ -171,7 +173,7 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
 
       <div className="h-px bg-gray-100 dark:bg-zinc-800/60 w-full" />
 
-      <SavingsChart yearlyLoss={yearlyLoss} yearlySaving={yearlySaving} />
+      <SavingsChart yearlyLoss={yearlyLoss} yearlySaving={yearlySaving} lang={lang} />
 
       {/* Footnote */}
       <footer

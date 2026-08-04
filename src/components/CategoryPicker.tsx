@@ -1,13 +1,15 @@
 import React from "react";
 import { getCategoryOptions } from "../lib/stepHelpers";
 import { CategorySlug } from "../lib/data";
+import { Lang, getCategoryName } from "../lib/i18n";
 
 interface CategoryPickerProps {
   value: CategorySlug;
   onChange: (value: CategorySlug) => void;
+  lang: Lang;
 }
 
-export const CategoryPicker: React.FC<CategoryPickerProps> = ({ value, onChange }) => {
+export const CategoryPicker: React.FC<CategoryPickerProps> = ({ value, onChange, lang }) => {
   const categories = getCategoryOptions();
 
   // Custom premium SVG icons for each category
@@ -107,7 +109,7 @@ export const CategoryPicker: React.FC<CategoryPickerProps> = ({ value, onChange 
               {renderIcon(cat.slug)}
             </div>
             <div>
-              <p className="font-semibold text-base tracking-tight">{cat.name}</p>
+              <p className="font-semibold text-base tracking-tight">{getCategoryName(cat.slug, lang)}</p>
             </div>
           </button>
         );

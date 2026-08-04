@@ -2,7 +2,7 @@ import { expect, test, describe, vi } from "vitest";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { Calculator } from "./Calculator";
-import { LIME_BOOKING_URL } from "../lib/data";
+import { LANG_TO_URL } from "../lib/i18n";
 
 vi.mock("next/navigation", () => ({
   useRouter() {
@@ -13,19 +13,35 @@ vi.mock("next/navigation", () => ({
 }));
 
 describe("Calculator Component Tests", () => {
-  test("CTA href resolves to the configured Lime Booking URL constant (AC3)", () => {
+  test("CTA href resolves to the language-specific Lime Booking URL (AC3)", () => {
     const initialState = {
       category: "frizerstvo",
       region: "osrednjeslovenska",
       noshows: 5,
       period: "monthly" as const,
       pkg: "advanced" as const,
+      lang: "sl" as const,
     };
 
     const markup = renderToStaticMarkup(React.createElement(Calculator, { initialState }));
-    
-    // We expect the link with id cta-register-button to have href equal to LIME_BOOKING_URL
-    expect(markup).toContain(`href="${LIME_BOOKING_URL}"`);
+
+    // Slovenian language selection should point the CTA at the Slovenian site
+    expect(markup).toContain(`href="${LANG_TO_URL.sl}"`);
     expect(markup).toContain('id="cta-register-button"');
+  });
+
+  test("CTA href switches per language (hr/sr/en)", () => {
+    for (const lang of ["hr", "sr", "en"] as const) {
+      const initialState = {
+        category: "frizerstvo",
+        region: "osrednjeslovenska",
+        noshows: 5,
+        period: "monthly" as const,
+        pkg: "advanced" as const,
+        lang,
+      };
+      const markup = renderToStaticMarkup(React.createElement(Calculator, { initialState }));
+      expect(markup).toContain(`href="${LANG_TO_URL[lang]}"`);
+    }
   });
 });

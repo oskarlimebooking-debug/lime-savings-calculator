@@ -12,6 +12,7 @@ describe("PriceInput Component Tests", () => {
         isCustom: false,
         onChange: vi.fn(),
         onReset: vi.fn(),
+        lang: "sl",
       })
     );
 
@@ -28,6 +29,7 @@ describe("PriceInput Component Tests", () => {
         isCustom: true,
         onChange: vi.fn(),
         onReset: vi.fn(),
+        lang: "sl",
       })
     );
 

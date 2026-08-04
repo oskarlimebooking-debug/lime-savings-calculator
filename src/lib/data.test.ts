@@ -10,6 +10,8 @@ import {
   getPackage,
   DEFAULT_PACKAGE_SLUG,
   LIME_BOOKING_URL,
+  ADDONS,
+  calculateAddonsTotal,
 } from "./data";
 
 describe("Price/region/category data module tests", () => {
@@ -64,34 +66,73 @@ describe("Price/region/category data module tests", () => {
     expect(LIME_BOOKING_URL).toBe("https://lime-booking.com");
   });
 
-  // AC7: PACKAGES has exactly Basic (email-only) and Advanced (SMS) tiers, Advanced has the higher
-  // reduction rate and higher price, and the default package is Advanced.
-  test("PACKAGES models Basic vs Advanced correctly and defaults to Advanced (AC7)", () => {
-    expect(PACKAGES.length).toBe(2);
+  // AC7: PACKAGES has all 4 real lime-booking.si/cenik tiers (basic/advanced/growth/pro),
+  // strictly increasing in price, SMS-inclusive tiers share the higher reduction rate, and the
+  // default package is Advanced.
+  test("PACKAGES models all 4 tiers correctly and defaults to Advanced (AC7)", () => {
+    expect(PACKAGES.length).toBe(4);
+    expect(PACKAGES.map((p) => p.slug)).toEqual(["basic", "advanced", "growth", "pro"]);
 
-    const basic = PACKAGES.find((p) => p.slug === "basic");
-    const advanced = PACKAGES.find((p) => p.slug === "advanced");
-    expect(basic).toBeDefined();
-    expect(advanced).toBeDefined();
+    const basic = PACKAGES.find((p) => p.slug === "basic")!;
+    const advanced = PACKAGES.find((p) => p.slug === "advanced")!;
+    const growth = PACKAGES.find((p) => p.slug === "growth")!;
+    const pro = PACKAGES.find((p) => p.slug === "pro")!;
 
-    expect(basic!.notificationChannel).toBe("email");
-    expect(basic!.smsCount).toBeNull();
-    expect(advanced!.notificationChannel).toBe("sms");
-    expect(advanced!.smsCount).toBeGreaterThan(0);
+    expect(basic.notificationChannel).toBe("email");
+    expect(basic.smsCount).toBeNull();
+    for (const pkg of [advanced, growth, pro]) {
+      expect(pkg.notificationChannel).toBe("sms");
+      expect(pkg.smsCount).toBeGreaterThan(0);
+      // SMS-inclusive tiers all share Advanced's reduction rate (no unsupported inflation for extra features)
+      expect(pkg.noShowReduction).toBe(advanced.noShowReduction);
+    }
 
-    // Advanced (SMS) outperforms Basic (email-only) on both no-show reduction and price
-    expect(advanced!.noShowReduction).toBeGreaterThan(basic!.noShowReduction);
-    expect(advanced!.monthlyPrice).toBeGreaterThan(basic!.monthlyPrice);
+    // Strictly increasing monthly price across tiers
+    expect(basic.monthlyPrice).toBeLessThan(advanced.monthlyPrice);
+    expect(advanced.monthlyPrice).toBeLessThan(growth.monthlyPrice);
+    expect(growth.monthlyPrice).toBeLessThan(pro.monthlyPrice);
+
+    // SMS-inclusive tiers outperform Basic (email-only) on no-show reduction
+    expect(advanced.noShowReduction).toBeGreaterThan(basic.noShowReduction);
 
     expect(DEFAULT_PACKAGE_SLUG).toBe("advanced");
 
     // getPackage resolves valid slugs and falls back to the default for unknown ones
     expect(getPackage("basic")).toEqual(basic);
-    expect(getPackage("advanced")).toEqual(advanced);
+    expect(getPackage("growth")).toEqual(growth);
+    expect(getPackage("pro")).toEqual(pro);
     expect(getPackage("nonexistent")).toEqual(advanced);
 
     // Backward-compatible aliases mirror the default (Advanced) package
-    expect(NOSHOW_REDUCTION).toBe(advanced!.noShowReduction);
-    expect(LIME_MONTHLY_PRICE).toBe(advanced!.monthlyPrice);
+    expect(NOSHOW_REDUCTION).toBe(advanced.noShowReduction);
+    expect(LIME_MONTHLY_PRICE).toBe(advanced.monthlyPrice);
+
+    // Every package has at least one headline feature
+    for (const pkg of PACKAGES) {
+      expect(pkg.features.length).toBeGreaterThan(0);
+    }
+  });
+
+  // AC8: ADDONS have positive per-unit prices, and calculateAddonsTotal sums selected quantities
+  // while treating missing/zero/negative quantities as 0.
+  test("ADDONS pricing and calculateAddonsTotal (AC8)", () => {
+    expect(ADDONS.length).toBeGreaterThan(0);
+    for (const addon of ADDONS) {
+      expect(addon.unitPrice).toBeGreaterThan(0);
+    }
+
+    expect(calculateAddonsTotal(undefined)).toBe(0);
+    expect(calculateAddonsTotal({})).toBe(0);
+
+    const extraUsers = ADDONS.find((a) => a.slug === "extraUsers")!;
+    const extraLocations = ADDONS.find((a) => a.slug === "extraLocations")!;
+
+    expect(calculateAddonsTotal({ extraUsers: 2 })).toBeCloseTo(extraUsers.unitPrice * 2, 5);
+    expect(
+      calculateAddonsTotal({ extraUsers: 1, extraLocations: 3 })
+    ).toBeCloseTo(extraUsers.unitPrice * 1 + extraLocations.unitPrice * 3, 5);
+
+    // Zero/negative quantities don't contribute
+    expect(calculateAddonsTotal({ extraUsers: 0, extraLocations: -5 })).toBe(0);
   });
 });

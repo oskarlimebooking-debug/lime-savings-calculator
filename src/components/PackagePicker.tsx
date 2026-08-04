@@ -3,15 +3,19 @@
 import React, { useEffect, useRef, useState } from "react";
 import { getPackageOptions } from "../lib/stepHelpers";
 import { PackageSlug } from "../lib/data";
+import { Lang, getTranslations, getPackageText } from "../lib/i18n";
 
 interface PackagePickerProps {
   value: PackageSlug;
   onChange: (value: PackageSlug) => void;
+  lang: Lang;
 }
 
-export const PackagePicker: React.FC<PackagePickerProps> = ({ value, onChange }) => {
+export const PackagePicker: React.FC<PackagePickerProps> = ({ value, onChange, lang }) => {
   const packages = getPackageOptions();
+  const t = getTranslations(lang);
   const selected = packages.find((p) => p.slug === value) ?? packages[packages.length - 1];
+  const selectedText = getPackageText(selected.slug, selected.name, selected.tagline, selected.features, lang);
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -42,9 +46,9 @@ export const PackagePicker: React.FC<PackagePickerProps> = ({ value, onChange })
         aria-expanded={open}
         className="w-full flex items-center justify-between gap-4 p-4 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-zinc-900 text-left transition-all duration-200 cursor-pointer hover:border-gray-300 dark:hover:border-gray-700 focus:outline-none focus:ring-2 focus:ring-lime-500/50"
       >
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 min-w-0">
           <div
-            className={`p-3 rounded-xl transition-colors duration-300 ${
+            className={`p-3 rounded-xl transition-colors duration-300 flex-shrink-0 ${
               selected.notificationChannel === "sms"
                 ? "bg-lime-500 text-white"
                 : "bg-gray-50 dark:bg-zinc-800 text-gray-500 dark:text-gray-400"
@@ -60,19 +64,19 @@ export const PackagePicker: React.FC<PackagePickerProps> = ({ value, onChange })
               </svg>
             )}
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col min-w-0">
             <div className="flex items-center gap-2">
               <p className="font-semibold text-base tracking-tight text-gray-800 dark:text-gray-200">
-                {selected.name}
+                {selectedText.name}
               </p>
               {selected.slug === "advanced" && (
-                <span className="px-2 py-0.5 rounded-full bg-lime-100 dark:bg-lime-950/50 text-lime-700 dark:text-lime-400 text-[10px] font-bold uppercase tracking-wider">
-                  Priporočeno
+                <span className="px-2 py-0.5 rounded-full bg-lime-100 dark:bg-lime-950/50 text-lime-700 dark:text-lime-400 text-[10px] font-bold uppercase tracking-wider flex-shrink-0">
+                  {t.packagePicker.recommended}
                 </span>
               )}
             </div>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {selected.tagline} &middot; {selected.monthlyPrice.toFixed(2).replace(".", ",")} €/mesec
+            <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+              {selectedText.tagline} &middot; {selected.monthlyPrice.toFixed(2).replace(".", ",")} €{t.packagePicker.perMonth}
             </p>
           </div>
         </div>
@@ -92,10 +96,11 @@ export const PackagePicker: React.FC<PackagePickerProps> = ({ value, onChange })
         <div
           id="package-picker-menu"
           role="listbox"
-          className="absolute z-20 mt-2 w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-xl overflow-hidden popIn"
+          className="absolute z-20 mt-2 w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-xl overflow-hidden popIn max-h-96 overflow-y-auto"
         >
           {packages.map((pkg) => {
             const isSelected = pkg.slug === value;
+            const text = getPackageText(pkg.slug, pkg.name, pkg.tagline, pkg.features, lang);
             return (
               <button
                 key={pkg.slug}
@@ -107,24 +112,34 @@ export const PackagePicker: React.FC<PackagePickerProps> = ({ value, onChange })
                   onChange(pkg.slug);
                   setOpen(false);
                 }}
-                className={`w-full flex items-center justify-between gap-4 p-4 text-left transition-colors duration-150 cursor-pointer ${
+                className={`w-full flex items-start justify-between gap-4 p-4 text-left transition-colors duration-150 cursor-pointer border-b border-gray-50 dark:border-zinc-800/60 last:border-b-0 ${
                   isSelected
                     ? "bg-lime-50/60 dark:bg-lime-950/20"
                     : "hover:bg-gray-50 dark:hover:bg-zinc-800/60"
                 }`}
               >
-                <div className="flex flex-col">
+                <div className="flex flex-col min-w-0 gap-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-sm text-gray-800 dark:text-gray-200">{pkg.name}</span>
+                    <span className="font-semibold text-sm text-gray-800 dark:text-gray-200">{text.name}</span>
                     {pkg.slug === "advanced" && (
-                      <span className="px-2 py-0.5 rounded-full bg-lime-100 dark:bg-lime-950/50 text-lime-700 dark:text-lime-400 text-[10px] font-bold uppercase tracking-wider">
-                        Priporočeno
+                      <span className="px-2 py-0.5 rounded-full bg-lime-100 dark:bg-lime-950/50 text-lime-700 dark:text-lime-400 text-[10px] font-bold uppercase tracking-wider flex-shrink-0">
+                        {t.packagePicker.recommended}
                       </span>
                     )}
                   </div>
                   <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {pkg.tagline} &middot; zmanjšanje neudeležb ~{Math.round(pkg.noShowReduction * 100)} %
+                    {text.tagline} &middot; {t.packagePicker.reductionApprox(Math.round(pkg.noShowReduction * 100))}
                   </span>
+                  <div className="flex flex-wrap gap-1 mt-0.5">
+                    {text.features.slice(0, 3).map((feature) => (
+                      <span
+                        key={feature}
+                        className="px-1.5 py-0.5 rounded-md bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-gray-400 text-[10px] font-medium"
+                      >
+                        {feature}
+                      </span>
+                    ))}
+                  </div>
                 </div>
                 <div className="flex items-center gap-3 flex-shrink-0">
                   <span className="text-sm font-bold text-gray-800 dark:text-gray-200">
