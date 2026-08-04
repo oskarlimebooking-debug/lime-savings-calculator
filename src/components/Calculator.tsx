@@ -17,7 +17,7 @@ import { getPrice, getPackage, AddonSlug } from "../lib/data";
 import { calculateSavings } from "../lib/calc";
 import { copyToClipboard } from "../lib/clipboard";
 import { track } from "../lib/analytics";
-import { getTranslations, buildLocalizedFootnote, LANG_TO_URL } from "../lib/i18n";
+import { getTranslations, buildLocalizedFootnote, getPackageText, LANG_TO_URL } from "../lib/i18n";
 
 interface CalculatorProps {
   initialState: UrlState;
@@ -62,6 +62,13 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
   };
   const results = calculateSavings(state.noshows, state.period, price, state.pkg, addons);
   const selectedPackage = getPackage(state.pkg);
+  const selectedPackageText = getPackageText(
+    selectedPackage.slug,
+    selectedPackage.name,
+    selectedPackage.tagline,
+    selectedPackage.features,
+    state.lang
+  );
 
   const handleAddonChange = (slug: AddonSlug, qty: number) => {
     setState((prev) => ({ ...prev, [slug]: qty > 0 ? qty : undefined }));
@@ -222,7 +229,13 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
                 {t.steps.addons}
               </h2>
             </div>
-            <AddonsPicker quantities={addons} onChange={handleAddonChange} lang={state.lang} />
+            <AddonsPicker
+              quantities={addons}
+              onChange={handleAddonChange}
+              lang={state.lang}
+              basePrice={selectedPackage.monthlyPrice}
+              packageName={selectedPackageText.name}
+            />
           </div>
         </div>
 
