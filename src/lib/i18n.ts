@@ -238,6 +238,8 @@ export interface Translations {
     heading: string;
     description: string;
     perMonth: string;
+    totalLabel: string;
+    baseLabel: (packageName: string) => string;
   };
   info: {
     triggerLabel: string;
@@ -335,6 +337,8 @@ const sl: Translations = {
     heading: "Dodatki k paketu",
     description: "Privzeto brez dodatkov. Če potrebujete več uporabnikov, lokacij ali sredstev, jih dodajte spodaj.",
     perMonth: "€/mesec",
+    totalLabel: "Skupna mesečna cena Lime Booking",
+    baseLabel: (packageName) => `paket ${packageName}`,
   },
   info: {
     triggerLabel: "Od kod izhajajo te številke?",
@@ -441,6 +445,8 @@ const hr: Translations = {
     heading: "Dodaci paketu",
     description: "Zadano bez dodataka. Ako trebate više korisnika, lokacija ili resursa, dodajte ih ispod.",
     perMonth: "€/mjesec",
+    totalLabel: "Ukupna mjesečna cijena Lime Booking",
+    baseLabel: (packageName) => `paket ${packageName}`,
   },
   info: {
     triggerLabel: "Odakle dolaze ovi brojevi?",
@@ -547,6 +553,8 @@ const sr: Translations = {
     heading: "Dodaci paketu",
     description: "Podrazumevano bez dodataka. Ako vam treba više korisnika, lokacija ili resursa, dodajte ih ispod.",
     perMonth: "€/mesec",
+    totalLabel: "Ukupna mesečna cena Lime Booking",
+    baseLabel: (packageName) => `paket ${packageName}`,
   },
   info: {
     triggerLabel: "Odakle dolaze ovi brojevi?",
@@ -653,6 +661,8 @@ const en: Translations = {
     heading: "Plan add-ons",
     description: "No add-ons by default. If you need more users, locations, or resources, add them below.",
     perMonth: "€/month",
+    totalLabel: "Total monthly Lime Booking price",
+    baseLabel: (packageName) => `${packageName} plan`,
   },
   info: {
     triggerLabel: "Where do these numbers come from?",
