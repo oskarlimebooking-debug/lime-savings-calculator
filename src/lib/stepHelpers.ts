@@ -1,4 +1,4 @@
-import { CATEGORIES, REGIONS, Category, Region } from "./data";
+import { CATEGORIES, REGIONS, PACKAGES, Category, Region, Package } from "./data";
 import { Period } from "./calc";
 
 export const NO_SHOW_LIMITS = {
@@ -43,4 +43,11 @@ export function getCategoryOptions(): readonly Category[] {
  */
 export function getRegionOptions(): readonly Region[] {
   return REGIONS;
+}
+
+/**
+ * Derives package list from lib/data.ts
+ */
+export function getPackageOptions(): readonly Package[] {
+  return PACKAGES;
 }

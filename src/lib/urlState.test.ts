@@ -6,11 +6,13 @@ import {
   DEFAULT_REGION,
   DEFAULT_NOSHOWS,
   DEFAULT_PERIOD,
+  DEFAULT_PKG,
   coerceNoShows,
+  coerceCustomPrice,
   UrlState,
   SearchParamsInput,
 } from "./urlState";
-import { CATEGORIES, REGIONS } from "./data";
+import { CATEGORIES, REGIONS, PACKAGES } from "./data";
 
 describe("URL state serialization and parsing (T2.1)", () => {
   // AC1: parseParams(toQueryString(state)) deep-equals the original valid state (round-trip vitest)
@@ -21,24 +23,36 @@ describe("URL state serialization and parsing (T2.1)", () => {
         region: "osrednjeslovenska",
         noshows: 10,
         period: "monthly",
+        pkg: "advanced",
       },
       {
         category: "brivstvo",
         region: "celjska",
         noshows: 0,
         period: "weekly",
+        pkg: "basic",
       },
       {
         category: "kozmeticni-saloni",
         region: "primorska",
         noshows: 99,
         period: "monthly",
+        pkg: "advanced",
       },
       {
         category: "druge-lepotne-storitve",
         region: "ostalo",
         noshows: 5,
         period: "weekly",
+        pkg: "basic",
+      },
+      {
+        category: "frizerstvo",
+        region: "gorenjska",
+        noshows: 8,
+        period: "monthly",
+        pkg: "advanced",
+        customPrice: 33.5,
       },
     ];
 
@@ -69,6 +83,7 @@ describe("URL state serialization and parsing (T2.1)", () => {
       region: DEFAULT_REGION,
       noshows: DEFAULT_NOSHOWS,
       period: DEFAULT_PERIOD,
+      pkg: DEFAULT_PKG,
     };
 
     expect(() => parseParams(null)).not.toThrow();
@@ -98,7 +113,40 @@ describe("URL state serialization and parsing (T2.1)", () => {
       region: DEFAULT_REGION, // undefined -> default
       noshows: 0, // "not-a-number" -> 0
       period: DEFAULT_PERIOD, // "daily" is invalid -> default
+      pkg: DEFAULT_PKG, // absent -> default
     });
+  });
+
+  // AC5: pkg param round-trips and falls back to the default package for unknown values;
+  // customPrice round-trips only when present and validly positive.
+  test("AC5: pkg validation/defaulting and customPrice coercion", () => {
+    expect(parseParams("?pkg=basic").pkg).toBe("basic");
+    expect(parseParams("?pkg=advanced").pkg).toBe("advanced");
+    expect(parseParams("?pkg=unknown-package").pkg).toBe(DEFAULT_PKG);
+    expect(parseParams(null).pkg).toBe(DEFAULT_PKG);
+    expect(PACKAGES.map((p) => p.slug)).toContain(DEFAULT_PKG);
+
+    expect(coerceCustomPrice(45.5)).toBe(45.5);
+    expect(coerceCustomPrice("45.5")).toBe(45.5);
+    expect(coerceCustomPrice(45.999)).toBe(46);
+    expect(coerceCustomPrice(0)).toBeUndefined();
+    expect(coerceCustomPrice(-10)).toBeUndefined();
+    expect(coerceCustomPrice("not-a-number")).toBeUndefined();
+    expect(coerceCustomPrice(undefined)).toBeUndefined();
+    expect(coerceCustomPrice(NaN)).toBeUndefined();
+
+    expect(parseParams("?price=39.5").customPrice).toBe(39.5);
+    expect(parseParams("?price=-5").customPrice).toBeUndefined();
+    expect(parseParams("?price=abc").customPrice).toBeUndefined();
+    expect(parseParams(null).customPrice).toBeUndefined();
+
+    const withPrice = toQueryString({ customPrice: 42 });
+    expect(withPrice).toContain("price=42");
+    expect(parseParams(withPrice).customPrice).toBe(42);
+
+    const withoutPrice = toQueryString({});
+    expect(withoutPrice).not.toContain("price=");
+    expect(parseParams(withoutPrice).customPrice).toBeUndefined();
   });
 
   // AC3: noshows is coerced to a non-negative integer; negatives/NaN clamp to 0 (asserted)

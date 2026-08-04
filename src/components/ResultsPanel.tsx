@@ -1,5 +1,7 @@
 import React from "react";
 import { formatEUR, getRoiClass, getRoiLabelMonths, FOOTNOTE_TEXT } from "../lib/calc";
+import { SavingsChart } from "./SavingsChart";
+import { InfoTrigger } from "./InfoModal";
 
 export interface ResultsPanelProps {
   monthlyLoss: number;
@@ -8,6 +10,9 @@ export interface ResultsPanelProps {
   roiMonths: number;
   roiTier: "green" | "warning";
   footnote?: string;
+  /** Percentage (0-1) of no-show reduction assumed for the currently selected package. */
+  noShowReduction?: number;
+  onInfoClick?: () => void;
 }
 
 export const ResultsPanel: React.FC<ResultsPanelProps> = ({
@@ -17,9 +22,12 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
   roiMonths,
   roiTier,
   footnote = FOOTNOTE_TEXT,
+  noShowReduction = 0.6,
+  onInfoClick,
 }) => {
   const roiClass = getRoiClass(roiMonths);
   const formattedRoi = getRoiLabelMonths(roiMonths);
+  const reductionPct = Math.round(noShowReduction * 100);
 
   return (
     <div
@@ -27,9 +35,12 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
       className="w-full bg-white dark:bg-zinc-900/40 backdrop-blur-xl border border-gray-100 dark:border-zinc-800/80 rounded-3xl p-6 md:p-8 shadow-xl shadow-gray-100/40 dark:shadow-none flex flex-col gap-6 md:gap-8"
     >
       <div className="flex flex-col gap-1.5">
-        <h2 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-gray-100 tracking-tight">
-          Izračun izpada in prihrankov
-        </h2>
+        <div className="flex items-center gap-1.5">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-gray-100 tracking-tight">
+            Izračun izpada in prihrankov
+          </h2>
+          {onInfoClick && <InfoTrigger onClick={onInfoClick} />}
+        </div>
         <p className="text-sm text-gray-400 dark:text-gray-500">
           Pregled finančnih učinkov neudeležb in potenciala za izboljšanje.
         </p>
@@ -81,7 +92,7 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
               {formatEUR(yearlySaving)}
             </span>
             <p className="text-xs text-lime-700/70 dark:text-lime-500/70 mt-2 font-medium">
-              Ob predpostavki 60 % zmanjšanja števila neudeležb z avtomatskimi opomniki.
+              Ob predpostavki {reductionPct} % zmanjšanja števila neudeležb z avtomatskimi opomniki.
             </p>
           </div>
         </div>
@@ -157,6 +168,10 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
           </div>
         </div>
       </div>
+
+      <div className="h-px bg-gray-100 dark:bg-zinc-800/60 w-full" />
+
+      <SavingsChart yearlyLoss={yearlyLoss} yearlySaving={yearlySaving} />
 
       {/* Footnote */}
       <footer

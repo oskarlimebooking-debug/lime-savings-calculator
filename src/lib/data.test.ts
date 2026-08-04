@@ -6,6 +6,10 @@ import {
   getPrice,
   NOSHOW_REDUCTION,
   LIME_MONTHLY_PRICE,
+  PACKAGES,
+  getPackage,
+  DEFAULT_PACKAGE_SLUG,
+  LIME_BOOKING_URL,
 } from "./data";
 
 describe("Price/region/category data module tests", () => {
@@ -53,5 +57,41 @@ describe("Price/region/category data module tests", () => {
         expect(typeof price).toBe("number");
       }
     }
+  });
+
+  // AC6: LIME_BOOKING_URL points at the live domain (lime-booking.com), not the non-resolving limebooking.si
+  test("LIME_BOOKING_URL points at the live lime-booking.com domain (AC6)", () => {
+    expect(LIME_BOOKING_URL).toBe("https://lime-booking.com");
+  });
+
+  // AC7: PACKAGES has exactly Basic (email-only) and Advanced (SMS) tiers, Advanced has the higher
+  // reduction rate and higher price, and the default package is Advanced.
+  test("PACKAGES models Basic vs Advanced correctly and defaults to Advanced (AC7)", () => {
+    expect(PACKAGES.length).toBe(2);
+
+    const basic = PACKAGES.find((p) => p.slug === "basic");
+    const advanced = PACKAGES.find((p) => p.slug === "advanced");
+    expect(basic).toBeDefined();
+    expect(advanced).toBeDefined();
+
+    expect(basic!.notificationChannel).toBe("email");
+    expect(basic!.smsCount).toBeNull();
+    expect(advanced!.notificationChannel).toBe("sms");
+    expect(advanced!.smsCount).toBeGreaterThan(0);
+
+    // Advanced (SMS) outperforms Basic (email-only) on both no-show reduction and price
+    expect(advanced!.noShowReduction).toBeGreaterThan(basic!.noShowReduction);
+    expect(advanced!.monthlyPrice).toBeGreaterThan(basic!.monthlyPrice);
+
+    expect(DEFAULT_PACKAGE_SLUG).toBe("advanced");
+
+    // getPackage resolves valid slugs and falls back to the default for unknown ones
+    expect(getPackage("basic")).toEqual(basic);
+    expect(getPackage("advanced")).toEqual(advanced);
+    expect(getPackage("nonexistent")).toEqual(advanced);
+
+    // Backward-compatible aliases mirror the default (Advanced) package
+    expect(NOSHOW_REDUCTION).toBe(advanced!.noShowReduction);
+    expect(LIME_MONTHLY_PRICE).toBe(advanced!.monthlyPrice);
   });
 });

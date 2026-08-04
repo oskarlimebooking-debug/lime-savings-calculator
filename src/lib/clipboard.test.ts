@@ -8,10 +8,11 @@ describe("Clipboard copy handler and URL building (T3.3)", () => {
     region: "celjska",
     noshows: 15,
     period: "weekly",
+    pkg: "advanced",
   };
 
   test("AC1: buildShareUrl produces a string that parseParams round-trips back to current state", () => {
-    const baseUrl = "https://kalkulator.limebooking.si/prihranek";
+    const baseUrl = "https://kalkulator.lime-booking.com/prihranek";
     const builtUrl = buildShareUrl(sampleState, baseUrl);
 
     // Assert that it built a full URL string starting with the base URL
@@ -20,6 +21,7 @@ describe("Clipboard copy handler and URL building (T3.3)", () => {
     expect(builtUrl).toContain("region=celjska");
     expect(builtUrl).toContain("noshows=15");
     expect(builtUrl).toContain("period=weekly");
+    expect(builtUrl).toContain("pkg=advanced");
 
     // Assert round-trip back to the original state
     const parsedState = parseParams(builtUrl);
@@ -31,7 +33,7 @@ describe("Clipboard copy handler and URL building (T3.3)", () => {
       // Mock success
     });
 
-    const targetUrl = "https://limebooking.si/?category=frizerstvo&region=celjska&noshows=5&period=monthly";
+    const targetUrl = "https://lime-booking.com/?category=frizerstvo&region=celjska&noshows=5&period=monthly&pkg=advanced";
     await copyToClipboard(targetUrl, mockClipboardFn);
 
     expect(mockClipboardFn).toHaveBeenCalledTimes(1);
@@ -43,7 +45,7 @@ describe("Clipboard copy handler and URL building (T3.3)", () => {
       throw new Error("Clipboard write permission denied");
     });
 
-    const targetUrl = "https://limebooking.si/?category=frizerstvo";
+    const targetUrl = "https://lime-booking.com/?category=frizerstvo";
 
     // Calling the copy handler with a rejecting mock should return a rejected promise
     // and NOT throw a synchronous exception.

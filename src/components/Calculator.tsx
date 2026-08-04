@@ -7,9 +7,12 @@ import { UrlState, toQueryString, buildShareUrl } from "../lib/urlState";
 import { CategoryPicker } from "./CategoryPicker";
 import { RegionPicker } from "./RegionPicker";
 import { NoShowInput } from "./NoShowInput";
+import { PackagePicker } from "./PackagePicker";
+import { PriceInput } from "./PriceInput";
+import { InfoModal } from "./InfoModal";
 import { ResultsPanel } from "./ResultsPanel";
-import { getPrice, LIME_BOOKING_URL } from "../lib/data";
-import { calculateSavings } from "../lib/calc";
+import { getPrice, getPackage, LIME_BOOKING_URL } from "../lib/data";
+import { calculateSavings, buildFootnoteText } from "../lib/calc";
 import { copyToClipboard } from "../lib/clipboard";
 import { track } from "../lib/analytics";
 
@@ -20,7 +23,8 @@ interface CalculatorProps {
 export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
   const router = useRouter();
   const [state, setState] = useState<UrlState>(initialState);
-  
+  const [infoOpen, setInfoOpen] = useState(false);
+
   // Track if this is the first render to avoid redundant routing
   const isFirstRender = useRef(true);
 
@@ -42,8 +46,11 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
   }, [state, router]);
 
   // Calculate pricing and savings based on current state
-  const price = getPrice(state.category, state.region);
-  const results = calculateSavings(state.noshows, state.period, price);
+  const defaultPrice = getPrice(state.category, state.region);
+  const isCustomPrice = state.customPrice !== undefined;
+  const price = state.customPrice ?? defaultPrice;
+  const results = calculateSavings(state.noshows, state.period, price, state.pkg);
+  const selectedPackage = getPackage(state.pkg);
 
   // Copy handler
   const handleCopyLink = async () => {
@@ -131,6 +138,16 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
               value={state.region}
               onChange={(region) => setState((prev) => ({ ...prev, region }))}
             />
+
+            <div className="h-px bg-gray-100 dark:bg-zinc-800/60 w-full" />
+
+            <PriceInput
+              value={price}
+              defaultPrice={defaultPrice}
+              isCustom={isCustomPrice}
+              onChange={(customPrice) => setState((prev) => ({ ...prev, customPrice }))}
+              onReset={() => setState((prev) => ({ ...prev, customPrice: undefined }))}
+            />
           </div>
 
           {/* Step 3: NoShow Input */}
@@ -150,6 +167,22 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
               onPeriodChange={(period) => setState((prev) => ({ ...prev, period }))}
             />
           </div>
+
+          {/* Step 4: Package Picker */}
+          <div className="bg-white dark:bg-zinc-900/20 border border-gray-100 dark:border-zinc-800/80 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col gap-5">
+            <div className="flex items-center gap-3">
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-lime-100 dark:bg-lime-950/50 text-lime-700 dark:text-lime-400 font-bold text-sm">
+                4
+              </span>
+              <h2 className="text-lg md:text-xl font-bold text-gray-800 dark:text-gray-200">
+                Izberite paket Lime Booking
+              </h2>
+            </div>
+            <PackagePicker
+              value={state.pkg}
+              onChange={(pkg) => setState((prev) => ({ ...prev, pkg }))}
+            />
+          </div>
         </div>
 
         {/* Right Side: Results + Call to Actions */}
@@ -160,7 +193,11 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
             yearlySaving={results.yearlySaving}
             roiMonths={results.roiMonths}
             roiTier={results.roiTier}
+            noShowReduction={selectedPackage.noShowReduction}
+            footnote={buildFootnoteText(state.pkg)}
+            onInfoClick={() => setInfoOpen(true)}
           />
+          <InfoModal packageSlug={state.pkg} open={infoOpen} onClose={() => setInfoOpen(false)} />
 
           {/* Copy Link & Share Actions */}
           <div className="flex flex-col sm:flex-row gap-3 w-full">

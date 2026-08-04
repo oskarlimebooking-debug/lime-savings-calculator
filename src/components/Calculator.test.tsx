@@ -19,6 +19,7 @@ describe("Calculator Component Tests", () => {
       region: "osrednjeslovenska",
       noshows: 5,
       period: "monthly" as const,
+      pkg: "advanced" as const,
     };
 
     const markup = renderToStaticMarkup(React.createElement(Calculator, { initialState }));

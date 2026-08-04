@@ -12,8 +12,8 @@ export function buildMetadata(state: UrlState) {
   const categoryName = categoryObj ? categoryObj.name : state.category;
   const regionName = regionObj ? regionObj.name : state.region;
 
-  const price = getPrice(state.category, state.region);
-  const savings = calculateSavings(state.noshows, state.period, price);
+  const price = state.customPrice ?? getPrice(state.category, state.region);
+  const savings = calculateSavings(state.noshows, state.period, price, state.pkg);
   const yearlyLoss = savings.yearlyLoss;
 
   // Format the yearly loss with dot separator for thousands (Slovenian style)
@@ -31,7 +31,7 @@ export function buildMetadata(state: UrlState) {
       description,
       images: [
         {
-          url: "https://limebooking.si/og-image.png",
+          url: "https://lime-booking.com/og-image.png",
           width: 1200,
           height: 630,
           alt: `${categoryName} v ${regionName} letna izguba`,
