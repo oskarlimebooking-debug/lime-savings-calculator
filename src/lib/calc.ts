@@ -57,11 +57,15 @@ export function calculateRoiMonths(monthlySaving: number, packagePrice: number =
   return packagePrice / monthlySaving;
 }
 
+/** Average days per month used to convert the ROI period into a day count for display. */
+export const ROI_DAYS_PER_MONTH = 30;
+
 /**
- * Returns the ROI tier: 'green' when < 2, else 'warning'.
+ * Returns the ROI tier: 'green' when the payback period is 30 days or less
+ * (roiMonths <= 1), else 'warning' (payback takes more than 30 days).
  */
 export function roiTier(roiMonths: number): "green" | "warning" {
-  return roiMonths < 2 ? "green" : "warning";
+  return roiMonths <= 1 ? "green" : "warning";
 }
 
 export interface CalculationResult {
@@ -122,24 +126,25 @@ export function formatEUR(val: number, locale: string = "sl-SI"): string {
 }
 
 /**
- * Maps roiMonths to lime-* vs warning class.
+ * Maps roiMonths to lime-* vs warning class. Mirrors `roiTier`'s 30-day boundary.
  */
 export function getRoiClass(roiMonths: number): string {
-  return roiMonths < 2 ? "lime-green" : "warning";
+  return roiMonths <= 1 ? "lime-green" : "warning";
 }
 
 /**
- * Formats ROI months according to the given locale (defaults to sl-SI, e.g. 1.3 => "1,3").
- * Returns "-" for non-finite values.
+ * Formats the ROI period in whole days (roiMonths × 30) according to the given locale
+ * (defaults to sl-SI, e.g. 0.3 months => "9"). Returns "-" for non-finite values.
  */
-export function getRoiLabelMonths(roiMonths: number, locale: string = "sl-SI"): string {
+export function getRoiLabelDays(roiMonths: number, locale: string = "sl-SI"): string {
   if (!Number.isFinite(roiMonths)) {
     return "-";
   }
+  const days = roiMonths * ROI_DAYS_PER_MONTH;
   return new Intl.NumberFormat(locale, {
     minimumFractionDigits: 0,
-    maximumFractionDigits: 1,
-  }).format(roiMonths);
+    maximumFractionDigits: 0,
+  }).format(days);
 }
 
 export interface RoiLabelState {
@@ -159,9 +164,9 @@ export interface RoiLabelState {
 export function roiLabel(state: RoiLabelState): { label: string; tier: "green" | "warning" } {
   const price = state.price ?? getPrice(state.category, state.region);
   const result = calculateSavings(state.noshows, state.period, price, state.packageSlug);
-  const formatted = getRoiLabelMonths(result.roiMonths);
+  const formatted = getRoiLabelDays(result.roiMonths);
   return {
-    label: `Lime Booking se povrne v ${formatted} mesecih`,
+    label: `Lime Booking se povrne v ${formatted} dneh`,
     tier: result.roiTier,
   };
 }
