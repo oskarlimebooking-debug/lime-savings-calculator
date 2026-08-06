@@ -285,6 +285,27 @@ export interface Translations {
     legendLoss: string;
     legendSaving: (pct: number) => string;
   };
+  rewards: {
+    heading: string;
+    subheading: (saving: string) => string;
+    shuffle: string;
+    shuffling: string;
+    /** Accessible name for the shuffle button — more explicit than the visible label. */
+    shuffleAria: string;
+    /**
+     * Renders `${qty}× ${label}`, or the bare label when qty === 1. Labels are stored in
+     * the nominative singular so no language needs plural forms: after "×", Slovenian,
+     * Croatian and Serbian all keep the singular, exactly as prices are written on a
+     * receipt. Identical in all four dictionaries by design — kept per-language so a
+     * future language needing different word order has somewhere to put it.
+     */
+    quantity: (qty: number, label: string) => string;
+    leftover: (amount: string) => string;
+    at: (retailer: string, price: string) => string;
+    newTab: string;
+    empty: string;
+    disclaimer: string;
+  };
   actions: {
     copyLink: string;
     copySuccess: string;
@@ -395,6 +416,21 @@ const sl: Translations = {
     lossSuffix: "izpada",
     legendLoss: "Izpad prihodka",
     legendSaving: (pct) => `Prihranek (${pct} %)`,
+  },
+  rewards: {
+    heading: "Kaj vse bi lahko kupili s prihrankom?",
+    subheading: (saving) => `S ${saving} letnega prihranka bi si lahko privoščili:`,
+    shuffle: "Premešaj",
+    shuffling: "Mešamo …",
+    shuffleAria: "Premešaj in prikaži tri nove predloge",
+    quantity: (qty, label) => (qty > 1 ? `${qty}× ${label}` : label),
+    leftover: (amount) => `… in še ${amount} za povrhu`,
+    at: (retailer, price) => `${retailer} · ${price}`,
+    newTab: "(odpre se v novem zavihku)",
+    empty:
+      "Vnesite število neudeležb zgoraj in poglejte, kaj vse bi lahko kupili s prihrankom.",
+    disclaimer:
+      "Cene so okvirne in zgolj ilustrativne. Povezave vodijo na spletne strani ponudnikov; Lime Booking z njimi ni povezan.",
   },
   actions: {
     copyLink: "Kopiraj povezavo",
@@ -508,6 +544,21 @@ const hr: Translations = {
     legendLoss: "Gubitak prihoda",
     legendSaving: (pct) => `Ušteda (${pct} %)`,
   },
+  rewards: {
+    heading: "Što biste sve mogli kupiti s uštedom?",
+    subheading: (saving) => `Uz ${saving} godišnje uštede mogli biste si priuštiti:`,
+    shuffle: "Promiješaj",
+    shuffling: "Miješamo …",
+    shuffleAria: "Promiješaj i prikaži tri nova prijedloga",
+    quantity: (qty, label) => (qty > 1 ? `${qty}× ${label}` : label),
+    leftover: (amount) => `… i još ${amount} povrh toga`,
+    at: (retailer, price) => `${retailer} · ${price}`,
+    newTab: "(otvara se u novoj kartici)",
+    empty:
+      "Unesite broj izostanaka iznad i pogledajte što biste sve mogli kupiti s uštedom.",
+    disclaimer:
+      "Cijene su okvirne i isključivo ilustrativne. Poveznice vode na stranice ponuditelja; Lime Booking s njima nije povezan.",
+  },
   actions: {
     copyLink: "Kopiraj poveznicu",
     copySuccess: "Poveznica kopirana u međuspremnik!",
@@ -620,6 +671,21 @@ const sr: Translations = {
     legendLoss: "Gubitak prihoda",
     legendSaving: (pct) => `Ušteda (${pct} %)`,
   },
+  rewards: {
+    heading: "Šta biste sve mogli da kupite sa uštedom?",
+    subheading: (saving) => `Uz ${saving} godišnje uštede mogli biste sebi da priuštite:`,
+    shuffle: "Promešaj",
+    shuffling: "Mešamo …",
+    shuffleAria: "Promešaj i prikaži tri nova predloga",
+    quantity: (qty, label) => (qty > 1 ? `${qty}× ${label}` : label),
+    leftover: (amount) => `… i još ${amount} povrh toga`,
+    at: (retailer, price) => `${retailer} · ${price}`,
+    newTab: "(otvara se u novom tabu)",
+    empty:
+      "Unesite broj izostanaka iznad i pogledajte šta biste sve mogli da kupite sa uštedom.",
+    disclaimer:
+      "Cene su okvirne i isključivo ilustrativne. Linkovi vode na sajtove ponuđača; Lime Booking sa njima nije povezan.",
+  },
   actions: {
     copyLink: "Kopiraj link",
     copySuccess: "Link kopiran u privremenu memoriju!",
@@ -731,6 +797,20 @@ const en: Translations = {
     lossSuffix: "in losses",
     legendLoss: "Revenue loss",
     legendSaving: (pct) => `Savings (${pct} %)`,
+  },
+  rewards: {
+    heading: "What could you buy with your savings?",
+    subheading: (saving) => `With ${saving} of yearly savings you could treat yourself to:`,
+    shuffle: "Shuffle",
+    shuffling: "Shuffling …",
+    shuffleAria: "Shuffle and show three new ideas",
+    quantity: (qty, label) => (qty > 1 ? `${qty}× ${label}` : label),
+    leftover: (amount) => `… plus ${amount} left over`,
+    at: (retailer, price) => `${retailer} · ${price}`,
+    newTab: "(opens in a new tab)",
+    empty: "Enter your number of no-shows above to see what your savings could buy.",
+    disclaimer:
+      "Prices are indicative and illustrative only. Links go to third-party sites; Lime Booking is not affiliated with them.",
   },
   actions: {
     copyLink: "Copy link",

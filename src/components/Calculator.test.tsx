@@ -44,4 +44,23 @@ describe("Calculator Component Tests", () => {
       expect(markup).toContain(`href="${LANG_TO_URL[lang]}"`);
     }
   });
+
+  test("renders the rewards band as a full-width section below the results panel", () => {
+    const initialState = {
+      category: "frizerstvo",
+      region: "osrednjeslovenska",
+      noshows: 20,
+      period: "monthly" as const,
+      pkg: "advanced" as const,
+      lang: "sl" as const,
+    };
+
+    const markup = renderToStaticMarkup(React.createElement(Calculator, { initialState }));
+
+    expect(markup).toContain('id="rewards-section"');
+    expect(markup).toContain('id="reward-card-0"');
+    expect(markup.indexOf('id="rewards-section"')).toBeGreaterThan(
+      markup.indexOf('id="results-panel-container"')
+    );
+  });
 });

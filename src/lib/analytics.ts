@@ -1,6 +1,10 @@
 import { track as vercelTrack } from "@vercel/analytics";
 
-export type AnalyticsEvent = "copy_link" | "cta_click";
+export type AnalyticsEvent =
+  | "copy_link"
+  | "cta_click"
+  | "reward_shuffle"
+  | "reward_click";
 
 export interface AnalyticsSink {
   track: (event: string, properties?: Record<string, string | number | boolean | null>) => void;
@@ -25,7 +29,7 @@ export function setAnalyticsSink(sink: AnalyticsSink) {
 
 /**
  * Tracks a custom analytics event.
- * Event-name constants are a closed union: "copy_link" | "cta_click".
+ * Event-name constants are a closed union — see AnalyticsEvent.
  */
 export function track(event: AnalyticsEvent, properties?: Record<string, string | number | boolean | null>) {
   activeSink.track(event, properties);

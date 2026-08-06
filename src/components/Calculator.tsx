@@ -13,6 +13,7 @@ import { AddonsPicker } from "./AddonsPicker";
 import { LanguagePicker } from "./LanguagePicker";
 import { InfoModal } from "./InfoModal";
 import { ResultsPanel } from "./ResultsPanel";
+import { RewardsSection } from "./RewardsSection";
 import { getPrice, getPackage, AddonSlug } from "../lib/data";
 import { calculateSavings } from "../lib/calc";
 import { copyToClipboard } from "../lib/clipboard";
@@ -302,6 +303,9 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
           </div>
         </div>
       </div>
+
+      {/* Full-width band: what the yearly saving could actually buy */}
+      <RewardsSection yearlySaving={results.yearlySaving} lang={state.lang} />
     </div>
   );
 };
