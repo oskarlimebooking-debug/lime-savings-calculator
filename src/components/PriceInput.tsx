@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Lang, getTranslations, LANG_LOCALE } from "../lib/i18n";
 import { formatEUR } from "../lib/calc";
+import { buttonClass, inputClass } from "../lib/ui";
 
 interface PriceInputProps {
   /** The effective price currently in use (custom override or region/category default). */
@@ -66,7 +67,7 @@ export const PriceInput: React.FC<PriceInputProps> = ({
             id="price-input-reset"
             type="button"
             onClick={onReset}
-            className="text-xs font-semibold text-lime-700 dark:text-lime-400 hover:underline cursor-pointer"
+            className={`${buttonClass("ghost", "sm")} !px-0 !py-0 !text-xs text-sage-700 dark:text-sage-400 hover:underline`}
           >
             {t.priceInput.reset(formatEUR(defaultPrice, LANG_LOCALE[lang]))}
           </button>
@@ -82,7 +83,7 @@ export const PriceInput: React.FC<PriceInputProps> = ({
             value={localString}
             onChange={handleChange}
             onBlur={handleBlur}
-            className="w-full px-3 py-2.5 pr-8 text-center font-bold text-lg border border-gray-200 dark:border-gray-800 rounded-xl bg-white dark:bg-zinc-900 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-lime-500/40 focus:border-lime-500 transition-all duration-200"
+            className={`${inputClass()} w-full pr-8`}
           />
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400 dark:text-gray-500 font-medium pointer-events-none">
             €

@@ -2,6 +2,7 @@ import React from "react";
 import { getRegionOptions } from "../lib/stepHelpers";
 import { RegionSlug } from "../lib/data";
 import { Lang, getRegionName } from "../lib/i18n";
+import { chipClass } from "../lib/ui";
 
 interface RegionPickerProps {
   value: RegionSlug;
@@ -22,11 +23,7 @@ export const RegionPicker: React.FC<RegionPickerProps> = ({ value, onChange, lan
             id={`region-picker-option-${reg.slug}`}
             type="button"
             onClick={() => onChange(reg.slug)}
-            className={`py-3 px-4 rounded-xl border text-center break-words hyphens-auto leading-snug transition-all duration-300 cursor-pointer font-medium text-sm focus:outline-none focus:ring-2 focus:ring-lime-500/50 ${
-              isSelected
-                ? "border-lime-500 bg-lime-50/40 dark:bg-lime-950/20 text-lime-700 dark:text-lime-400 shadow-sm"
-                : "border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 bg-white dark:bg-zinc-900 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
-            }`}
+            className={`${chipClass(isSelected)} py-3 px-4 rounded-xl text-center break-words hyphens-auto leading-snug font-medium text-sm`}
           >
             {getRegionName(reg.slug, lang)}
           </button>

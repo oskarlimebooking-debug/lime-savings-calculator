@@ -5,12 +5,30 @@ const config: Config = {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    // src/lib/ui.ts holds the shared class-string primitives, so it must be
+    // scanned too or Tailwind never emits those utilities.
+    "./src/lib/**/*.{js,ts}",
   ],
   theme: {
     extend: {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        // Sage: the CTA/brand ramp introduced with the shared UI primitives
+        // (src/lib/ui.ts). 500 is the CTA green #548F68 from the design spec.
+        sage: {
+          50: '#f3f7f4',
+          100: '#e2ece6',
+          200: '#c4d9cc',
+          300: '#9bbfa9',
+          400: '#74a386',
+          500: '#548F68',
+          600: '#427354',
+          700: '#365c44',
+          800: '#2c4938',
+          900: '#253c2f',
+          950: '#12201a',
+        },
         lime: {
           50: '#f0fdf4',
           100: '#dcfce7',

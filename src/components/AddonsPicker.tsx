@@ -4,6 +4,7 @@ import React from "react";
 import { ADDONS, AddonSlug, AddonQuantities, calculateAddonsTotal } from "../lib/data";
 import { Lang, getTranslations, getAddonName, LANG_LOCALE } from "../lib/i18n";
 import { formatEUR } from "../lib/calc";
+import { buttonClass, cardClass } from "../lib/ui";
 
 interface AddonsPickerProps {
   quantities: AddonQuantities;
@@ -38,7 +39,7 @@ export const AddonsPicker: React.FC<AddonsPickerProps> = ({
             <div
               key={addon.slug}
               id={`addon-row-${addon.slug}`}
-              className="flex items-center justify-between gap-3 p-3.5 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-zinc-900"
+              className={`${cardClass()} flex items-center justify-between gap-3 p-3.5 !rounded-xl`}
             >
               <div className="flex flex-col min-w-0">
                 <span className="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate">
@@ -55,7 +56,7 @@ export const AddonsPicker: React.FC<AddonsPickerProps> = ({
                   onClick={() => onChange(addon.slug, Math.max(qty - 1, 0))}
                   disabled={qty <= 0}
                   aria-label={`-1 ${getAddonName(addon.slug, addon.name, lang)}`}
-                  className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                  className={`${buttonClass("secondary", "sm")} w-8 h-8 !px-0 !rounded-lg`}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" />
@@ -70,7 +71,7 @@ export const AddonsPicker: React.FC<AddonsPickerProps> = ({
                   onClick={() => onChange(addon.slug, Math.min(qty + 1, MAX_QTY))}
                   disabled={qty >= MAX_QTY}
                   aria-label={`+1 ${getAddonName(addon.slug, addon.name, lang)}`}
-                  className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                  className={`${buttonClass("secondary", "sm")} w-8 h-8 !px-0 !rounded-lg`}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14M5 12h14" />
@@ -84,7 +85,7 @@ export const AddonsPicker: React.FC<AddonsPickerProps> = ({
 
       <div
         id="addons-total-summary"
-        className="flex items-center justify-between gap-3 p-3.5 rounded-xl bg-lime-50/60 dark:bg-lime-950/20 border border-lime-100 dark:border-lime-900/30"
+        className="flex items-center justify-between gap-3 p-3.5 rounded-xl bg-sage-50/60 dark:bg-sage-950/20 border border-sage-100 dark:border-sage-900/30"
       >
         <div className="flex flex-col min-w-0">
           <span className="text-sm font-bold text-gray-800 dark:text-gray-100">{t.addons.totalLabel}</span>
@@ -95,7 +96,7 @@ export const AddonsPicker: React.FC<AddonsPickerProps> = ({
         </div>
         <span
           id="addons-total-price"
-          className="text-lg font-black text-lime-600 dark:text-lime-400 flex-shrink-0"
+          className="text-lg font-black text-sage-600 dark:text-sage-400 flex-shrink-0"
         >
           {formatEUR(totalPrice, locale)}
           {t.packagePicker.perMonth}

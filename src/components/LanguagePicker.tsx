@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { Lang, LANGUAGES, getTranslations } from "../lib/i18n";
+import { buttonClass, cardClass } from "../lib/ui";
 
 interface LanguagePickerProps {
   value: Lang;
@@ -40,7 +41,7 @@ export const LanguagePicker: React.FC<LanguagePickerProps> = ({ value, onChange 
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={t.languagePicker.label}
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-800 bg-white dark:bg-zinc-900 text-sm font-semibold text-gray-600 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-lime-500/50"
+        className={`${buttonClass("secondary", "sm")} !rounded-full !gap-1.5`}
       >
         <span aria-hidden="true">{selected.flag}</span>
         <span>{selected.label}</span>
@@ -60,7 +61,7 @@ export const LanguagePicker: React.FC<LanguagePickerProps> = ({ value, onChange 
         <div
           id="language-picker-menu"
           role="listbox"
-          className="absolute right-0 z-20 mt-2 w-40 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-xl overflow-hidden popIn"
+          className={`${cardClass(true)} absolute right-0 z-20 mt-2 w-40 overflow-hidden popIn`}
         >
           {LANGUAGES.map((lang) => {
             const isSelected = lang.code === value;
@@ -77,7 +78,7 @@ export const LanguagePicker: React.FC<LanguagePickerProps> = ({ value, onChange 
                 }}
                 className={`w-full flex items-center gap-2 px-3.5 py-2.5 text-left text-sm font-medium transition-colors duration-150 cursor-pointer ${
                   isSelected
-                    ? "bg-lime-50/60 dark:bg-lime-950/20 text-lime-700 dark:text-lime-400"
+                    ? "bg-sage-50/60 dark:bg-sage-950/20 text-sage-700 dark:text-sage-300"
                     : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800/60"
                 }`}
               >

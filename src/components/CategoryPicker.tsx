@@ -2,6 +2,7 @@ import React from "react";
 import { getCategoryOptions } from "../lib/stepHelpers";
 import { CategorySlug } from "../lib/data";
 import { Lang, getCategoryName } from "../lib/i18n";
+import { chipClass } from "../lib/ui";
 
 interface CategoryPickerProps {
   value: CategorySlug;
@@ -93,16 +94,12 @@ export const CategoryPicker: React.FC<CategoryPickerProps> = ({ value, onChange,
             id={`category-picker-option-${cat.slug}`}
             type="button"
             onClick={() => onChange(cat.slug)}
-            className={`flex items-center gap-4 p-4 rounded-2xl border text-left transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-lime-500/50 ${
-              isSelected
-                ? "border-lime-500 bg-lime-50/40 dark:bg-lime-950/20 text-lime-700 dark:text-lime-400 shadow-sm shadow-lime-100/50 dark:shadow-none"
-                : "border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 bg-white dark:bg-zinc-900 text-gray-700 dark:text-gray-300"
-            }`}
+            className={`${chipClass(isSelected)} flex items-center gap-4 p-4 rounded-2xl text-left`}
           >
             <div
               className={`p-3 rounded-xl transition-colors duration-300 ${
                 isSelected
-                  ? "bg-lime-500 text-white"
+                  ? "bg-sage-500 text-white"
                   : "bg-gray-50 dark:bg-zinc-800 text-gray-500 dark:text-gray-400 group-hover:bg-gray-100"
               }`}
             >

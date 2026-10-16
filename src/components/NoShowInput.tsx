@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Period } from "../lib/calc";
 import { clampNoShows, convertNoShowsPeriod, NO_SHOW_LIMITS } from "../lib/stepHelpers";
 import { Lang, getTranslations } from "../lib/i18n";
+import { inputClass } from "../lib/ui";
 
 interface NoShowInputProps {
   value: number;
@@ -120,7 +121,7 @@ export const NoShowInput: React.FC<NoShowInputProps> = ({
               value={localString}
               onChange={handleTextChange}
               onBlur={handleBlur}
-              className="w-24 px-3 py-2.5 text-center font-bold text-lg border border-gray-200 dark:border-gray-800 rounded-xl bg-white dark:bg-zinc-900 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-lime-500/40 focus:border-lime-500 transition-all duration-200"
+              className={`${inputClass()} w-24`}
             />
             <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
               {period === "weekly" ? t.noShowInput.perWeek : t.noShowInput.perMonth}
@@ -138,7 +139,7 @@ export const NoShowInput: React.FC<NoShowInputProps> = ({
           max={limits.max}
           value={value}
           onChange={handleSliderChange}
-          className="w-full h-2.5 bg-gray-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-lime-600 focus:outline-none focus:ring-2 focus:ring-lime-500/30"
+          className="w-full h-2.5 bg-gray-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-sage-600 focus:outline-none focus:ring-2 focus:ring-sage-500/30"
         />
         <div className="flex justify-between text-xs font-semibold text-gray-400 dark:text-gray-500 px-1">
           <span>{limits.min}</span>
