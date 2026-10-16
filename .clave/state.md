@@ -1,6 +1,6 @@
 # Current State
 
-> Last updated: 2026-10-16 21:06
+> Last updated: 2026-10-16 21:08
 
 ## What Was Just Done
 
@@ -21,8 +21,6 @@
 **2026-08-03 11:54:** T2.2: Dynamic SEO metadata (`generateMetadata`) in `src/app/page.tsx` fully implemented. Extracted a pure `buildMetadata(state)` and verified all 4 acceptance criteria via Vitest tests. Next.js builds, lint checks, and typechecks pass.
 
 **2026-08-03 11:46:** T1.3: Pure calculation engine (`lib/calc.ts`) fully implemented, including period normalization, saving calculations, and ROI tiering. All 5 acceptance criteria verified with extensive Vitest tests.
-
-**2026-08-03 11:42:** T1.2: Price/region/category data module (`lib/data.ts`) fully implemented with pricing arrays, constants, validation tests, and type checking green.
 
 **2026-08-03 09:34:** Engage run materialized
 
