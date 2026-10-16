@@ -27,11 +27,25 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        // Inter is loaded in src/app/layout.tsx and exposed as --font-inter.
+        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+      },
       fontSize: {
-        // Lime type hierarchy tokens used by the results panel and chart.
-        h1: ['2.25rem', { lineHeight: '1.1', letterSpacing: '-0.02em', fontWeight: '800' }],
-        'body-m': ['0.9375rem', { lineHeight: '1.5' }],
-        caption: ['0.6875rem', { lineHeight: '1.45' }],
+        // Lime universal type scale — identical at every breakpoint, so there
+        // are no responsive variants of these tokens.
+        h1: ['24px', { lineHeight: '32px', fontWeight: '600', letterSpacing: '-0.25px' }],
+        h2: ['20px', { lineHeight: '28px', fontWeight: '600', letterSpacing: '-0.25px' }],
+        h3: ['18px', { lineHeight: '26px', fontWeight: '600' }],
+        h4: ['16px', { lineHeight: '22px', fontWeight: '600' }],
+        'body-l': ['16px', { lineHeight: '24px', fontWeight: '400' }],
+        'body-m': ['14px', { lineHeight: '21px', fontWeight: '400' }],
+        subtitle: ['13px', { lineHeight: '18px', fontWeight: '500' }],
+        caption: ['12px', { lineHeight: '17px', fontWeight: '400' }],
+        button: ['14px', { lineHeight: '17px', fontWeight: '500' }],
+        // `label` pairs with the `uppercase` utility; text-transform is not a
+        // fontSize token in Tailwind.
+        label: ['11px', { lineHeight: '15px', fontWeight: '500', letterSpacing: '0.4px' }],
       },
       colors: {
         background: "var(--background)",

@@ -126,10 +126,12 @@ export function formatEUR(val: number, locale: string = "sl-SI"): string {
 }
 
 /**
- * Maps roiMonths to lime-* vs warning class. Mirrors `roiTier`'s 30-day boundary.
+ * Maps roiMonths to the success vs warning status token class. Mirrors `roiTier`'s
+ * 30-day boundary — only the class names moved to the design tokens, the boundary
+ * itself is unchanged.
  */
 export function getRoiClass(roiMonths: number): string {
-  return roiMonths <= 1 ? "lime-green" : "warning";
+  return roiMonths <= 1 ? "roi-success" : "roi-warning";
 }
 
 /**

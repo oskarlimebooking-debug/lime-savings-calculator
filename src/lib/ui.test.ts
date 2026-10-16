@@ -1,12 +1,16 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import tailwindConfig from "../../tailwind.config";
 import {
   buttonClass,
   cardClass,
   badgeClass,
   chipClass,
   inputClass,
+  ACCENT,
+  chartSeriesColor,
+  ChartSeries,
   BadgeStatus,
 } from "./ui";
 
@@ -118,5 +122,78 @@ describe("prenovljene komponente", () => {
 
   it.each(REFACTORED)("%s uvozi vsaj en primitiv iz lib/ui", (name) => {
     expect(read(name)).toMatch(/from "\.\.\/lib\/ui"/);
+  });
+});
+
+describe("barve grafa (T2.2)", () => {
+  /** `accent` objekt iz Tailwind configa — edini vir resnice za paleto grafa. */
+  const accent = (
+    tailwindConfig.theme?.extend?.colors as
+      | Record<string, Record<string, string>>
+      | undefined
+  )?.accent;
+
+  const SERIES: ChartSeries[] = ["loss", "saving"];
+
+  it("accent paleta je definirana v Tailwind configu", () => {
+    expect(accent).toBeDefined();
+    expect(Object.keys(accent ?? {}).length).toBeGreaterThan(0);
+  });
+
+  it("AC2: chartSeriesColor vrne izključno vrednosti iz accent palete", () => {
+    const allowed = Object.values(accent ?? {});
+    for (const series of SERIES) {
+      expect(allowed).toContain(chartSeriesColor(series));
+    }
+  });
+
+  it("ACCENT v ui.ts se ujema z accent objektom iz Tailwind configa", () => {
+    expect({ ...ACCENT }).toEqual(accent);
+  });
+
+  it("vsaka serija ima svojo barvo in nobena ni prazna", () => {
+    const colors = SERIES.map((s) => chartSeriesColor(s));
+    colors.forEach((c) => expect(c).toMatch(/^#[0-9A-Fa-f]{6}$/));
+    expect(new Set(colors).size).toBe(SERIES.length);
+  });
+
+  it("graf ne uporablja zelenih žetonov (lime/sage)", () => {
+    const greens = [...Object.values(ACCENT)].filter((c) =>
+      ["#22c55e", "#16a34a", "#548F68"].includes(c),
+    );
+    expect(greens).toEqual([]);
+  });
+});
+
+describe("prenovljeni rezultatski panel in graf (T2.2)", () => {
+  const readComponent = (name: string) =>
+    readFileSync(join(__dirname, "..", "components", `${name}.tsx`), "utf8");
+
+  it.each(["SavingsChart", "ResultsPanel"])(
+    "AC3: %s ne vsebuje gradientov",
+    (name) => {
+      expect(readComponent(name)).not.toContain("gradient");
+    },
+  );
+
+  it.each(["SavingsChart", "ResultsPanel"])(
+    "%s ne uporablja več surovih lime- razredov",
+    (name) => {
+      expect(readComponent(name)).not.toContain("lime-");
+    },
+  );
+
+  it("ResultsPanel postavlja glavno številko v H1 žeton, vire pa v caption", () => {
+    const src = readComponent("ResultsPanel");
+    // glavna številka = letni prihranek
+    expect(src).toMatch(/id="results-yearly-saving"[\s\S]*?text-h1/);
+    // viri = footnote
+    expect(src).toMatch(/id="results-footnote"[\s\S]*?text-caption/);
+  });
+
+  it("SavingsChart barva stolpce prek pomožne funkcije, ne prek razredov", () => {
+    const src = readComponent("SavingsChart");
+    expect(src).toContain('chartSeriesColor("saving")');
+    expect(src).toContain('chartSeriesColor("loss")');
   });
 });

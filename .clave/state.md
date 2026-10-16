@@ -1,8 +1,10 @@
 # Current State
 
-> Last updated: 2026-10-16 23:05
+> Last updated: 2026-10-16 21:06
 
 ## What Was Just Done
+
+**2026-10-16 23:09:** T1.2: Tipografija prestavljena z Geist/Arial na Inter. `layout.tsx` zdaj nalaga Inter prek `next/font/google` (`subsets: latin + latin-ext` zaradi šumnikov, `display: swap`, spremenljivka `--font-inter`), telo dobi `font-sans`. V `tailwind.config.ts` dodan `fontFamily.sans` (`var(--font-inter)` → system-ui → sans-serif) in cela Lime univerzalna lestvica kot `fontSize` žetoni: h1 24/32·600·−0.25px, h2 20/28, h3 18/26, h4 16/22, body-l 16/24, body-m 14/21, subtitle 13/18, caption 12/17, button 14/17, label 11/15·0.4px. Stari žetoni h1/body-m/caption so dobili nove (manjše, px) vrednosti, zato so se `ResultsPanel` in `SavingsChart` vizualno pomanjšali — razredi ostajajo isti, brez sprememb komponent. `globals.css` ne uporablja več Ariala. Geist woff datoteki odstranjeni z `git rm`. Nov `src/typography.test.ts` (4 testi, AC1–AC4); skupno 163 testov, typecheck, lint in build zeleni, Inter se v buildu self-hosta kot woff2.
 
 **2026-10-16 23:05:** T1.1: Barvni tokeni zamenjani z Lime Booking paleto. V `tailwind.config.ts` dodan `brand` ključ (sage `#74B587`, cta `#548F68`, ctaHover `#447856`, ctaPressed `#3D6D4D`) ter semantični `focus`, `danger` `#F46969` in `default` `#8C8C8C`; `success` `#4FB870` in `warning` `#EDA300` sta že ustrezala specifikaciji. `accent` paleta zamenjana s pravo blagovno (vanilija, mango, breskev, bežev, sivka, hortenzija, plavica — 7 unikatnih hexov), `ACCENT` v `src/lib/ui.ts` usklajen z njo, graf zato zdaj riše s plavico in sivko iz blagovne palete. Stara `lime.*` lestvica je zdaj samo alias `sage` lestvice, tako da nemigrirani `lime-*` razredi (Calculator, RewardsSection, RewardCard, InfoModal) brez sprememb kode renderajo brand zeleno — brez vzporednega sistema. V `globals.css` posodobljene `--accent`, `--accent-light` (sage wash), `--bg #FAFAFA`, `--card #FFFFFF`, `--warning #EDA300`. `src/tailwind.config.test.ts` razširjen na 6 testov (AC1–AC4 + alias); 159 testov, typecheck, lint in build zeleni, v zgenerirani CSS je `.bg-lime-600` zdaj sage `#427354`.
 
@@ -22,13 +24,11 @@
 
 **2026-08-03 11:42:** T1.2: Price/region/category data module (`lib/data.ts`) fully implemented with pricing arrays, constants, validation tests, and type checking green.
 
-**2026-08-03 11:38:** T1.1: Next.js 14 + TS + Tailwind scaffolded with Lime tokens. CSS vars and keyframes configured in globals.css. Vitest added with a tailwind config test. Build, typecheck, and tests green.
-
 **2026-08-03 09:34:** Engage run materialized
 
 ## What's Next
 
-T2.2 — Prenova rezultatskega panela in grafa
+T1.2 — Inter tipografska lestvica namesto Geist/Arial
 
 ## Blockers
 

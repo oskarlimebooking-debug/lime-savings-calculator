@@ -26,7 +26,7 @@ describe("ResultsPanel Component Tests", () => {
     expect(normalized).toContain("Lime Booking se povrne v 15 dneh");
 
     // Renders the green tier class name (AC3)
-    expect(markup).toContain("lime-green");
+    expect(markup).toContain("roi-success");
 
     // Green tier does not render the honest "doesn't pay off yet" value-add callout
     expect(markup).not.toContain('id="results-value-add"');

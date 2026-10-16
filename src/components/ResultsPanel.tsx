@@ -47,21 +47,21 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
           </h2>
           {onInfoClick && <InfoTrigger onClick={onInfoClick} label={t.info.triggerLabel} />}
         </div>
-        <p className="text-sm text-gray-400 dark:text-gray-500">{t.results.subheading}</p>
+        <p className="text-body-m text-gray-400 dark:text-gray-500">{t.results.subheading}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         {/* Estimated Revenue Loss Panel */}
         <div className="bg-gray-50/50 dark:bg-zinc-800/20 border border-gray-100 dark:border-zinc-800/50 rounded-2xl p-5 flex flex-col gap-4">
           <div className="flex flex-col">
-            <span className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+            <span className="text-caption font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
               {t.results.monthlyLoss}
             </span>
             <div key={monthlyLoss} className="mt-1.5">
               <AutoFitAmount
                 id="results-monthly-loss"
                 text={formatEUR(monthlyLoss, locale)}
-                className="text-2xl md:text-3xl font-extrabold text-gray-800 dark:text-gray-100 popIn"
+                className="text-body-m font-bold text-gray-800 dark:text-gray-100 popIn"
               />
             </div>
           </div>
@@ -69,33 +69,33 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
           <div className="h-px bg-gray-100 dark:bg-zinc-800/50 w-full" />
 
           <div className="flex flex-col">
-            <span className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+            <span className="text-caption font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
               {t.results.yearlyLoss}
             </span>
             <div key={yearlyLoss} className="mt-1.5">
               <AutoFitAmount
                 id="results-yearly-loss"
                 text={formatEUR(yearlyLoss, locale)}
-                className="text-2xl md:text-3xl font-extrabold text-gray-800 dark:text-gray-100 popIn"
+                className="text-body-m font-bold text-gray-800 dark:text-gray-100 popIn"
               />
             </div>
           </div>
         </div>
 
         {/* Potential Savings Panel */}
-        <div className="bg-lime-50/30 dark:bg-lime-950/5 border border-lime-100/50 dark:border-lime-900/20 rounded-2xl p-5 flex flex-col justify-between gap-4">
+        <div className="bg-success-soft/60 dark:bg-success/5 border border-success/20 dark:border-success/20 rounded-2xl p-5 flex flex-col justify-between gap-4">
           <div className="flex flex-col">
-            <span className="text-xs font-bold text-lime-700 dark:text-lime-500 uppercase tracking-wider">
+            <span className="text-caption font-bold text-success-strong dark:text-success uppercase tracking-wider">
               {t.results.yearlySaving}
             </span>
             <div key={yearlySaving} className="mt-1.5">
               <AutoFitAmount
                 id="results-yearly-saving"
                 text={formatEUR(yearlySaving, locale)}
-                className="text-3xl md:text-4xl font-black text-lime-600 dark:text-lime-400 popIn"
+                className="text-h1 text-success-strong dark:text-success popIn"
               />
             </div>
-            <p className="text-xs text-lime-700/70 dark:text-lime-500/70 mt-2 font-medium">
+            <p className="text-caption text-success-strong/70 dark:text-success/70 mt-2 font-medium">
               {t.results.savingAssumption(reductionPct)}
             </p>
           </div>
@@ -107,16 +107,16 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
         id="results-roi-card"
         className={`p-5 rounded-2xl border transition-all duration-300 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 ${
           roiTier === "green"
-            ? "bg-lime-50/60 border-lime-200 dark:bg-lime-950/10 dark:border-lime-900/50"
-            : "bg-amber-50/60 border-amber-200 dark:bg-amber-950/10 dark:border-amber-900/50"
+            ? "bg-success-soft/70 border-success/30 dark:bg-success/5 dark:border-success/30"
+            : "bg-warning-soft/70 border-warning/30 dark:bg-warning/5 dark:border-warning/30"
         } ${roiClass}`}
       >
         <div className="flex items-start gap-3">
           <div
             className={`p-2.5 rounded-xl ${
               roiTier === "green"
-                ? "bg-lime-500 text-white"
-                : "bg-amber-500 text-white"
+                ? "bg-success text-white"
+                : "bg-warning text-white"
             }`}
           >
             {roiTier === "green" ? (
@@ -152,17 +152,17 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
               id="results-roi-label"
               className={`text-lg font-bold tracking-tight ${
                 roiTier === "green"
-                  ? "text-lime-800 dark:text-lime-300"
-                  : "text-amber-800 dark:text-amber-300"
+                  ? "text-success-strong dark:text-success"
+                  : "text-warning-strong dark:text-warning"
               }`}
             >
               {t.results.roiLabel(formattedRoi)}
             </span>
             <p
-              className={`text-xs mt-0.5 font-medium ${
+              className={`text-caption mt-0.5 font-medium ${
                 roiTier === "green"
-                  ? "text-lime-700/80 dark:text-lime-400/70"
-                  : "text-amber-700/80 dark:text-amber-400/70"
+                  ? "text-success-strong/80 dark:text-success/80"
+                  : "text-warning-strong/80 dark:text-warning/80"
               }`}
             >
               {roiTier === "green" ? t.results.roiGreen : t.results.roiWarning}
@@ -171,10 +171,10 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
             {roiTier === "warning" && (
               <div
                 id="results-value-add"
-                className="flex items-start gap-2 mt-3 pt-3 border-t border-amber-200/60 dark:border-amber-900/40"
+                className="flex items-start gap-2 mt-3 pt-3 border-t border-warning/30 dark:border-warning/30"
               >
                 <svg
-                  className="w-4 h-4 flex-shrink-0 mt-0.5 text-amber-600 dark:text-amber-400"
+                  className="w-4 h-4 flex-shrink-0 mt-0.5 text-warning-strong dark:text-warning"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2.5"
@@ -188,10 +188,10 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
                   />
                 </svg>
                 <div className="flex flex-col">
-                  <span className="text-xs font-bold text-amber-800 dark:text-amber-300">
+                  <span className="text-caption font-bold text-warning-strong dark:text-warning">
                     {t.results.valueAddHeading}
                   </span>
-                  <p className="text-xs text-amber-700/80 dark:text-amber-400/70 mt-0.5">
+                  <p className="text-caption text-warning-strong/80 dark:text-warning/80 mt-0.5">
                     {t.results.valueAddText}
                   </p>
                 </div>
@@ -208,7 +208,7 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
       {/* Footnote */}
       <footer
         id="results-footnote"
-        className="text-[11px] leading-normal text-gray-400 dark:text-gray-500 border-t border-gray-100 dark:border-zinc-800/60 pt-4"
+        className="text-caption text-gray-400 dark:text-gray-500 border-t border-gray-100 dark:border-zinc-800/60 pt-4"
       >
         {footnote}
       </footer>

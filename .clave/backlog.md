@@ -1,90 +1,83 @@
-## Phase 1: Foundation, data & calculation engine
+## Faza 1: Temelji oblikovnega sistema (tokeni)
 
-### T1.1 — Scaffold Next.js 14 + TS + Tailwind with Lime tokens | Cx: 25 | P0
-**Description:** Initialize a Next.js 14 App Router project in TypeScript with Tailwind, mirroring the Lime stack in `../lime-api-v2`. Add the `lime` color scale (50–900), CSS vars (`--accent #16a34a`, `--accent-light #dcfce7`, `--bg #f8faf9`, `--card #fff`, `--warning #f59e0b`) and the `popIn`/`slideUp`/`fadeIn` keyframes to `globals.css`. Add vitest + `test`/`typecheck` npm scripts.
+### T1.1 — Zamenjava barvnih tokenov z Lime Booking paleto | Cx: 40 | P0
+**Description:** Trenutni `tailwind.config.ts` uporablja generično Tailwind `lime` lestvico (`#22c55e`/`#16a34a`), ki ni Lime Booking blagovna znamka. Dodaj pravo paleto: brand sage `#74B587` (identiteta, focus ring, poudarki), CTA `#548F68` (hover `#447856`, pressed `#3D6D4D`), success `#4FB870`, warning `#EDA300`, danger `#F46969`, default `#8C8C8C`, ter accent paleto (vanilija `#FDF6DD`, mango `#EDA300`, breskev `#F6DFDF`, bežev `#F7F3FA`, sivka `#A881C6`, hortenzija `#E0ECF4`, plavica `#2D8CCA`) kot ločen `accent` ključ. V `globals.css` posodobi CSS spremenljivke (`--accent`, `--accent-light` → sage wash `rgba(116,181,135,.14)`, `--bg #FAFAFA`, `--card #FFFFFF`, `--warning #EDA300`). Stare `lime.*` ključe ohrani le kot alias, če jih kaj še uporablja — brez vzporednih sistemov.
 **Acceptance Criteria:**
-- [ ] `npm run typecheck` (`tsc --noEmit`) exits 0
-- [ ] `npm run build` completes successfully
-- [ ] `npx vitest run` exits 0 with at least one passing smoke test
-- [ ] `tailwind.config.*` defines `colors.lime.500 === '#22c55e'` and `colors.lime.600 === '#16a34a'` (asserted by a vitest test importing the config)
+- [ ] Razširi `src/tailwind.config.test.ts`: `colors.brand.sage === '#74B587'`, `colors.brand.cta === '#548F68'`, `colors.brand.ctaHover === '#447856'` (vitest ob uvozu configa)
+- [ ] Vitest trdi, da so vsi semantični ključi (`success`, `warning`, `danger`, `focus`) definirani in veljavni hex nizi (regex `/^#[0-9A-Fa-f]{6}$/`)
+- [ ] Vitest prebere `src/app/globals.css` z `fs.readFileSync` in trdi, da `:root` vsebuje `--bg: #FAFAFA` in `--card: #FFFFFF`
+- [ ] Vitest trdi, da `accent` paleta vsebuje natanko 7 ključev z unikatnimi hex vrednostmi
+- [ ] `npm run typecheck` in `npm run build` končata z izhodom 0
 **Depends on:** none
 
-### T1.2 — Price/region/category data module | Cx: 40 | P0
-**Description:** Create a typed `lib/data.ts` (or JSON + loader) holding categories (frizerstvo, brivstvo, kozmetični saloni, druge lepotne storitve), SI regions (osrednjeslovenska, celjska, maribor, primorska, gorenjska, ostalo) plus optional HR/RS, and an approximate average price per category×region. Include a documented `NOSHOW_REDUCTION = 0.6` and `LIME_MONTHLY_PRICE` constant, each with a source comment.
+### T1.2 — Inter tipografska lestvica namesto Geist/Arial | Cx: 35 | P0
+**Description:** `layout.tsx` nalaga Geist, `globals.css` pa telo postavi na `Arial, Helvetica, sans-serif`. Preklopi na Inter (`next/font/google` ali lokalni woff2) in dodaj Lime univerzalno lestvico kot Tailwind `fontSize` tokene — ista na vseh prelomnih točkah: H1 24/32·600·−0.25px, H2 20/28·600·−0.25px, H3 18/26·600, H4 16/22·600, body-l 16/24·400, body-m 14/21·400, subtitle 13/18·500, caption 12/17·400, button 14/17·500, label 11/15·500 uppercase 0.4px. Odstrani neuporabljene Geist woff datoteke.
 **Acceptance Criteria:**
-- [ ] `getPrice(category, region)` returns a positive finite number for every valid category×region combination (vitest loops all combos)
-- [ ] `getPrice` throws or returns a documented fallback for unknown keys (asserted)
-- [ ] `CATEGORIES` and `REGIONS` arrays each have unique slug keys (vitest Set-size assertion)
-- [ ] `NOSHOW_REDUCTION` is within [0.5, 0.7] and `LIME_MONTHLY_PRICE > 0` (asserted)
-- [ ] Every category exposes a price entry for every region (no undefined gaps, asserted)
+- [ ] Vitest trdi, da `config.theme.extend.fontSize` vsebuje ključe `h1,h2,h3,h4,body-l,body-m,subtitle,caption,button,label` z ujemajočimi se pari velikost/višina vrstice (npr. `h1 === ['24px', { lineHeight: '32px', fontWeight: '600', letterSpacing: '-0.25px' }]`)
+- [ ] Vitest prebere `src/app/layout.tsx` in trdi, da vsebuje `Inter` ter ne vsebuje več niza `Geist`
+- [ ] Vitest prebere `globals.css` in trdi, da `font-family` ne vsebuje več `Arial`
+- [ ] Datoteki `src/app/fonts/GeistVF.woff` in `GeistMonoVF.woff` ne obstajata več (`fs.existsSync === false`)
+- [ ] `npm run build` končа z izhodom 0
 **Depends on:** T1.1
 
-### T1.3 — Pure calculation engine | Cx: 45 | P0
-**Description:** Implement `lib/calc.ts` with pure functions: normalize no-shows to monthly (`period: 'weekly'|'monthly'`, weekly ×4.33), `monthlyLoss = noShowsPerMonth × price`, `yearlyLoss = monthlyLoss × 12`, `yearlySaving = yearlyLoss × NOSHOW_REDUCTION`, `monthlySaving = yearlySaving / 12`, and `roiMonths = LIME_MONTHLY_PRICE / monthlySaving`. Add `roiTier(roiMonths)` returning `'green' | 'warning'` (green when < 2). Guard divide-by-zero.
+### T1.3 — Površine, radiji, senčenje in temna tema | Cx: 45 | P0
+**Description:** Dodaj Lime površinske sloje kot tokene: svetla tema canvas `#FAFAFA` → kartice `#FFFFFF` → paneli `#F5F5F7` → subtilna polnila `#F0F0F0`, ločilnice `#F0F0F0`, besedilo `#181818`/`#5C5C5C`/`#8C8C8C`. Temna tema: `#121413` → `#1B1E1C` → `#232624` → `#2B2E2C`, hairline `#2E322F`, besedilo `#F2F3F1`/`#B1B5B2`/`#8B8F8D`, **brez senc** (elevacija samo s svetlostjo). Radiji: kartice 12px, gumbi/inputi 8px, chipi pill. Razmiki na 4pt osnovi. Senčenje le za modale/popover v svetli temi. Obstoječi `@media (prefers-color-scheme: dark)` blok razširi na vse površine.
 **Acceptance Criteria:**
-- [ ] Weekly input of 5 with price 30 yields `monthlyLoss ≈ 649.5` and `yearlyLoss ≈ 7794` (vitest, tolerance ±0.5)
-- [ ] `yearlySaving === yearlyLoss * 0.6` for sampled inputs (asserted)
-- [ ] `roiMonths` equals `LIME_MONTHLY_PRICE / monthlySaving` and returns `Infinity` (not NaN/throw) when no-shows = 0
-- [ ] `roiTier` returns `'green'` for roiMonths < 2 and `'warning'` for ≥ 2 (boundary tested at 2)
-- [ ] All calc functions are pure — same inputs give same outputs across repeated calls (asserted)
-**Depends on:** T1.2
+- [ ] Vitest trdi, da Tailwind `borderRadius` vsebuje `card: '12px'`, `control: '8px'`, `pill: '9999px'`
+- [ ] Vitest trdi, da `colors.surface` vsebuje vse štiri svetle in vse štiri temne stopnje z unikatnimi vrednostmi
+- [ ] Vitest prebere `globals.css` in trdi, da blok `prefers-color-scheme: dark` definira `--bg: #121413` in `--card: #1B1E1C`
+- [ ] Vitest trdi, da noben `box-shadow` ni definiran znotraj temnega bloka v `globals.css` (regex preverjanje izseka bloka)
+- [ ] `npm run typecheck` končа z izhodom 0
+**Depends on:** T1.1
 
-## Phase 2: URL state & SEO
+## Faza 2: Prenova komponent
 
-### T2.1 — URL param serialization/parsing | Cx: 35 | P0
-**Description:** Implement `lib/urlState.ts`: `parseParams(searchParams)` → validated `{category, region, noshows, period}` with safe defaults and clamping (noshows ≥ 0, valid enums only); `toQueryString(state)` producing `?category=…&region=…&noshows=…&period=…`. Round-trip stable.
+### T2.1 — Skupni slogovni primitivi in prenova izbirnikov | Cx: 55 | P1
+**Description:** Ustvari `src/lib/ui.ts` s čistimi funkcijami, ki vračajo nize razredov: `buttonClass(variant: 'primary'|'secondary'|'ghost', size)`, `cardClass(elevated?)`, `badgeClass(status)`, `chipClass(selected)`. Primarni gumb = CTA `#548F68` z belo oznako, hover/pressed stopnje, fokus sage ring. Nato prepiši `CategoryPicker`, `RegionPicker`, `PackagePicker`, `AddonsPicker`, `NoShowInput`, `PriceInput`, `LanguagePicker` tako, da uporabljajo te primitive namesto podvojenih ad-hoc razredov. Brez sprememb logike ali props vmesnikov — samo vizualni sloj.
 **Acceptance Criteria:**
-- [ ] `parseParams(toQueryString(state))` deep-equals the original valid state (round-trip vitest)
-- [ ] Invalid/missing params resolve to documented defaults, never throw (asserted with garbage input)
-- [ ] `noshows` is coerced to a non-negative integer; negatives/NaN clamp to 0 (asserted)
-- [ ] Unknown category/region enum values fall back to the first valid option (asserted)
-**Depends on:** T1.2
+- [ ] Vitest: `buttonClass('primary')` vrne niz s CTA razredom in fokus ring razredom; `buttonClass('ghost')` ne vsebuje polnila ozadja (trditve na nizu)
+- [ ] Vitest: `chipClass(true) !== chipClass(false)` in izbrana varianta vsebuje sage wash razred
+- [ ] Vitest: `badgeClass` za vseh 6 statusov vrne unikatne nize in nikoli prazen niz
+- [ ] Vitest prebere vseh 7 prenovljenih komponent in trdi, da nobena ne vsebuje več surovih `bg-lime-` razredov
+- [ ] Obstoječi testi (`AddonsPicker.test.tsx`, `PackagePicker.test.tsx`, `PriceInput.test.tsx`, `LanguagePicker.test.tsx`) še naprej prehajajo nespremenjeni
+**Depends on:** T1.1, T1.2, T1.3
 
-### T2.2 — Dynamic SEO metadata (generateMetadata) | Cx: 40 | P1
-**Description:** Implement Next.js `generateMetadata({ searchParams })` in `app/page.tsx` that reads params via T2.1, computes yearly loss via T1.3, and returns `title` = "{Panoga} v {Regija}: letna izguba €{znesek} | Lime Savings Calculator", a `description` with the figure + CTA, and Open Graph tags. Configure ISR (`export const revalidate`). Extract a pure `buildMetadata(state)` for testing.
+### T2.2 — Prenova rezultatskega panela in grafa | Cx: 50 | P1
+**Description:** Prenovi `ResultsPanel`, `SavingsChart` in `AutoFitAmount` po Lime hierarhiji: glavna številka v H1 tokenu, podporne vrednosti v body-m, viri v caption. ROI poudarek naj uporablja success `#4FB870` oziroma warning `#EDA300` prek obstoječega `getRoiClass` helperja — posodobi le preslikavo razredov, ne mejnih vrednosti. Graf naj uporablja accent paleto (plavica/sivka), ne treh zelenih. Ploske površine, brez gradientov.
 **Acceptance Criteria:**
-- [ ] `buildMetadata` for a known state returns a `title` containing the localized category, region, and the computed euro figure (vitest)
-- [ ] Returned object includes `openGraph.title`, `openGraph.description`, and `openGraph.images` (asserted non-empty)
-- [ ] `description` is ≤ 160 characters (asserted)
-- [ ] `npm run build` succeeds with `generateMetadata` and `revalidate` present (typecheck + build pass)
-**Depends on:** T2.1, T1.3
+- [ ] Vitest: `getRoiClass` vrne success-token razred za roiMonths < 2 in warning-token razred za ≥ 2, testirano na meji 2 (obstoječi test razširjen)
+- [ ] Vitest: pomožna funkcija barv grafa vrne izključno vrednosti iz accent palete (preverjeno proti uvoženemu `accent` objektu iz Tailwind configa)
+- [ ] Vitest prebere `SavingsChart.tsx` in `ResultsPanel.tsx` ter trdi, da ne vsebujeta `gradient`
+- [ ] Obstoječi `ResultsPanel.test.tsx` in `SavingsChart.test.tsx` prehajata brez sprememb trditev o vsebini
+- [ ] `npm run typecheck` končа z izhodom 0
+**Depends on:** T2.1
 
-## Phase 3: UI, interactivity & sharing
-
-### T3.1 — Step components (category / region / no-shows) | Cx: 45 | P1
-**Description:** Build controlled components `CategoryPicker`, `RegionPicker`, `NoShowInput` (slider + numeric, weekly/monthly toggle). Each is a pure controlled component taking `value`+`onChange`. Keep selection/formatting logic in exported helpers so it is headlessly testable without a DOM render.
+### T2.3 — Umirjena animacija po Lime pravilih | Cx: 40 | P2
+**Description:** Lime dovoljuje le kratke prelive in ease prehode — brez odbojev in dekorativnega vrtenja. Trenutni `popIn` in `rewardSettle` uporabljata `cubic-bezier(0.34, 1.56, 0.64, 1)` (overshoot). Zamenjaj z ease-out krivuljami, skrajšaj trajanja, `reelSpin` ohrani (je funkcionalen del nagradnega mehanizma), a skrajšaj `SETTLE_MS` kaskado v `RewardsSection.tsx`. Preveri, da `prefers-reduced-motion` blok pokriva vse aktivne animacije.
 **Acceptance Criteria:**
-- [ ] `NoShowInput` helper clamps out-of-range slider/numeric values to [min,max] (vitest on the helper)
-- [ ] Weekly/monthly toggle helper converts the displayed count correctly between modes (asserted)
-- [ ] `CategoryPicker`/`RegionPicker` option lists are derived from `lib/data.ts` (length matches data, asserted via imported helper)
-- [ ] Components typecheck with strict prop types (`tsc --noEmit` passes)
-**Depends on:** T1.2, T1.3
+- [ ] Vitest prebere `globals.css` in trdi, da noben `animation` ne uporablja krivulje s kontrolno točko > 1 (regex na `cubic-bezier`)
+- [ ] Vitest trdi, da `prefers-reduced-motion` blok našteje vsa imena animacijskih razredov, ki so definirana v datoteki (izpeljan seznam, ne trdo kodiran)
+- [ ] Vitest: izvožena konstanta `SETTLE_MS` je naraščajoče zaporedje in zadnji element ≤ 3000
+- [ ] Obstoječi `RewardsSection.test.tsx` prehaja nespremenjen
+**Depends on:** T2.1
 
-### T3.2 — Results panel with ROI highlight | Cx: 40 | P1
-**Description:** Build `ResultsPanel` rendering monthly/yearly loss, yearly saving, and "Lime Booking se povrne v X mesecih" with tier-based color (green < 2 months, warning otherwise) and the source footnote (no-show reduction study + Lime price source). Currency via a pure `formatEUR` helper (sl-SI). Animate value changes with the existing `popIn` class.
+## Faza 3: Dostopnost, znamka in zaključek
+
+### T3.1 — Fokus ring, kontrast in dotikalne tarče | Cx: 40 | P1
+**Description:** Vsak interaktiven element dobi vse tri stanja (hover / focus / active). Fokus je vedno sage `#74B587` ring v obeh temah. Minimalna dotikalna tarča 44px na mobilnem. Dodaj čisto pomožno funkcijo `contrastRatio(fg, bg)` v `src/lib/ui.ts` in z njo v testih preveri uporabljene pare besedilo/ozadje.
 **Acceptance Criteria:**
-- [ ] `formatEUR(1234.5)` returns a sl-SI formatted euro string (vitest, contains "€" and grouped digits)
-- [ ] `roiLabel(state)` helper returns the expected "…v X mesecih" string and the correct tier for sampled inputs (asserted)
-- [ ] A helper maps roiMonths to the `lime-*` (green) vs `warning` class — asserted at boundary 2
-- [ ] Source footnote text is present in the rendered output helper/props (asserted non-empty string)
-**Depends on:** T1.3
+- [ ] Vitest: `contrastRatio('#FFFFFF', '#447856') >= 4.5` in `contrastRatio('#181818', '#FAFAFA') >= 4.5`
+- [ ] Vitest: vsi pari telesnega besedila iz tokenov (svetla in temna tema) dosežejo ≥ 4.5 (zankan test nad preslikavo parov)
+- [ ] Vitest: `buttonClass` za vse variante in velikosti vrne razred z minimalno višino ≥ 44px (`min-h-11` ali ekvivalent)
+- [ ] Vitest prebere vse datoteke v `src/components` in trdi, da nobena ne uporablja `outline-none` brez spremljajočega `focus-visible:ring`
+**Depends on:** T2.1, T2.2
 
-### T3.3 — Live URL sync + copy link + toast | Cx: 35 | P2
-**Description:** Wire the page so state changes call `router.replace` with `toQueryString` (no reload) and hydrate initial state from `parseParams`. Add "Kopiraj povezavo" button using `navigator.clipboard` and react-hot-toast confirmation. Keep the URL-building side pure (covered by T2.1).
+### T3.2 — Čiščenje stare palete, znamka in DESIGN.md | Cx: 35 | P2
+**Description:** Odstrani zadnje ostanke stare generične zelene iz celotnega `src/`, zamenjaj privzeto `metadata` v `layout.tsx` ("Create Next App") z Lime naslovom in opisom, dodaj Lime petal favicon/mark in logotip SVG v `public/`. Zapiši `DESIGN.md` z izpeljanim oblikovnim sistemom (tokeni, uporaba, prepovedi) in dodaj straž-test, ki prepreči regresijo nazaj na staro paleto.
 **Acceptance Criteria:**
-- [ ] The URL builder used by the button produces a string that `parseParams` round-trips back to current state (vitest reuses T2.1 helpers)
-- [ ] Copy handler is a thin wrapper over an injectable clipboard fn; a vitest with a mock clipboard asserts the full URL string is passed to it
-- [ ] Copy handler resolves/rejects without throwing when the clipboard mock rejects (asserted)
-- [ ] `tsc --noEmit` passes with react-hot-toast wired in
-**Depends on:** T2.1, T3.1, T3.2
-
-## Phase 4: Analytics & deployment config
-
-### T4.1 — Analytics events + Vercel deploy config | Cx: 30 | P2
-**Description:** Add Vercel Analytics and a typed `track(event)` wrapper firing `copy_link` and `cta_click` (Preizkusi Lime Booking → limebooking.si). Add the CTA button, `vercel.json`/env docs, and confirm production build. Keep `track` injectable so events can be asserted without a browser.
-**Acceptance Criteria:**
-- [ ] `track` calls the injected analytics sink with the exact event name for `copy_link` and `cta_click` (vitest with a spy)
-- [ ] Event-name constants are a closed union; passing an unknown event fails typecheck (verified by a `// @ts-expect-error` line that `tsc` accepts)
-- [ ] CTA href resolves to the configured Lime Booking URL constant (asserted)
-- [ ] `npm run build` succeeds and `vercel.json` (or documented env in README) exists on disk
-**Depends on:** T3.3
+- [ ] Vitest straž-test prečeše vse datoteke v `src/` in trdi 0 pojavitev `#22c55e`, `#16a34a` in `lime-500`
+- [ ] Vitest trdi, da `layout.tsx` ne vsebuje niza `Create Next App` in da je izvožen `metadata.title` neprazen ter vsebuje "Lime"
+- [ ] Datoteke `public/logo-primary.svg` in `public/favicon-circle.svg` obstajajo in so neprazne (`fs.statSync().size > 0`)
+- [ ] `DESIGN.md` obstaja in vsebuje razdelke "Barve", "Tipografija", "Površine", "Prepovedi" (preverjeno z branjem datoteke v vitestu)
+- [ ] `npm run lint`, `npm run typecheck`, `npm run build` in `npm run test` vsi končajo z izhodom 0
+**Depends on:** T2.3, T3.1

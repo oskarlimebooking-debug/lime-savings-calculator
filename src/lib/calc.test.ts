@@ -144,13 +144,27 @@ describe("Pure calculation engine tests", () => {
     expect(resWarningFinite.tier).toBe("warning");
   });
 
-  // AC3: A helper maps roiMonths to the lime-* (green) vs warning class — asserted at the 30-day boundary (roiMonths === 1)
+  // AC3: A helper maps roiMonths to the success vs warning status token class —
+  // asserted at the 30-day boundary (roiMonths === 1). T2.2 moved the class names
+  // onto the design tokens; the boundary itself is deliberately unchanged.
   test("AC3: getRoiClass boundary assertions at 30 days (1 month)", () => {
-    expect(getRoiClass(0.99)).toBe("lime-green");
-    expect(getRoiClass(1)).toBe("lime-green");
-    expect(getRoiClass(1.01)).toBe("warning");
-    expect(getRoiClass(0)).toBe("lime-green");
-    expect(getRoiClass(Infinity)).toBe("warning");
+    expect(getRoiClass(0.99)).toBe("roi-success");
+    expect(getRoiClass(1)).toBe("roi-success");
+    expect(getRoiClass(1.01)).toBe("roi-warning");
+    expect(getRoiClass(0)).toBe("roi-success");
+    expect(getRoiClass(Infinity)).toBe("roi-warning");
+  });
+
+  // T2.2/AC1: the mapping returns the success token below the boundary and the
+  // warning token at or above it, including at roiMonths === 2.
+  test("T2.2/AC1: getRoiClass returns status token classes, warning at and above 2 months", () => {
+    expect(getRoiClass(1.5)).toBe("roi-warning");
+    expect(getRoiClass(2)).toBe("roi-warning");
+    expect(getRoiClass(2.5)).toBe("roi-warning");
+    // Never an empty string, and always one of the two status tokens.
+    for (const months of [0, 0.5, 1, 1.0001, 2, 99, Infinity]) {
+      expect(["roi-success", "roi-warning"]).toContain(getRoiClass(months));
+    }
   });
 
   // AC4: Source footnote text is present in the rendered output helper/props (asserted non-empty string)
