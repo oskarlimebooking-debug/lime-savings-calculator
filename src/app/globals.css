@@ -52,9 +52,10 @@ body {
   }
 }
 
+/* Lime motion: short ease-out fades only — no overshoot, no bounce. */
 @keyframes popIn {
   from {
-    transform: scale(0.95);
+    transform: scale(0.98);
     opacity: 0;
   }
   to {
@@ -64,18 +65,7 @@ body {
 }
 
 .popIn {
-  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(10px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  animation: popIn 0.18s ease-out forwards;
 }
 
 @keyframes fadeIn {
@@ -90,7 +80,7 @@ body {
 /* The fadeIn keyframes above had no matching rule, so `animate-fadeIn` in
    Calculator.tsx was a dead class. This revives it. */
 .animate-fadeIn {
-  animation: fadeIn 0.4s ease-out forwards;
+  animation: fadeIn 0.25s ease-out forwards;
 }
 
 /* Reward shuffler: one reel row is 6rem tall. The strip renders 8 rows plus a
@@ -110,22 +100,18 @@ body {
 }
 
 @keyframes rewardSettle {
-  0% {
-    transform: translateY(-10%) scale(0.96);
+  from {
+    transform: translateY(-6%);
     opacity: 0;
   }
-  60% {
-    transform: translateY(2%) scale(1.02);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(0) scale(1);
+  to {
+    transform: translateY(0);
     opacity: 1;
   }
 }
 
 .rewardSettle {
-  animation: rewardSettle 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: rewardSettle 0.22s ease-out forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {

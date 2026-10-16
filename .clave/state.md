@@ -1,8 +1,10 @@
 # Current State
 
-> Last updated: 2026-10-16 21:15
+> Last updated: 2026-10-16 21:20
 
 ## What Was Just Done
+
+**2026-10-16 23:23:** T2.3: Animacije umirjene po Lime pravilih. V `globals.css` sta `popIn` (0.3s → 0.18s) in `rewardSettle` (0.45s → 0.22s) zdaj `ease-out` — overshoot krivulja `cubic-bezier(0.34, 1.56, 0.64, 1)` je odstranjena iz datoteke, prav tako odbojni 60 % keyframe v `rewardSettle`; `popIn` začne pri `scale(0.98)` namesto `0.95`. `fadeIn` skrajšan na 0.25s. `reelSpin` ohranjen nespremenjen (0.55s linear infinite — funkcionalni del nagradnega mehanizma). Mrtvi `@keyframes slideUp` (brez pravila in brez uporabnika) odstranjeni. `SETTLE_MS` v `RewardsSection.tsx` izvožen in skrajšan s `[3200, 3900, 4600]` na `[1400, 1900, 2400]` — zadnja kartica se ustavi pri 2,4 s namesto 4,6 s. `prefers-reduced-motion` blok pokriva vse štiri aktivne razrede (`reelSpin`, `rewardSettle`, `animate-fadeIn`, `popIn`). Nov `src/motion.test.ts` (5 testov): AC1 (nobena kontrolna točka > 1), AC2 (seznam razredov izpeljan iz datoteke, ne trdo kodiran), AC3 (naraščajoče zaporedje, zadnji ≤ 3000), plus kratka trajanja in nič mrtvih keyframov. `RewardsSection.test.tsx` nespremenjen in zelen (AC4); skupno 178 testov, typecheck (exit 0), lint in build zeleni.
 
 **2026-10-16 23:18:** T2.2: Rezultatski panel in graf prenovljena po Lime hierarhiji. Strukturni del (glavna številka v `text-h1`, podporne vrednosti v `body-m`, viri v `caption`, `AutoFitAmount`, accent paleta grafa, brez gradientov, `getRoiClass` → `roi-success`/`roi-warning`) je bil že v delovnem drevesu in je pripotoval v commit T1.2 — preveril sem, da AC1–AC4 res držijo (testi zeleni), zato so kljukice obstale. V tem koraku dodana še žetonizacija obeh komponent: generične sivine (`gray-*`, `zinc-*`) zamenjane s `surface-*` / `ink-*` / `line` žetoni iz T1.3, radiji z `rounded-card` / `rounded-control` / `rounded-pill`, naslovi in oznake prestavljeni na lestvico iz T1.2 (`text-h2`, `text-h3`, `text-label`, `text-subtitle`), odstranjeni `shadow-xl shadow-gray-100/40` in `backdrop-blur-xl` — panel je zdaj ploska površina, elevacija izhaja samo iz svetlosti. `getRoiClass` in meje ROI nedotaknjene. 5 novih testov v `src/lib/ui.test.ts` (brez sivin, brez senc, žetoni radijev); skupno 173 testov, typecheck (exit 0), lint in build zeleni, `rounded-card`/`text-h2`/`text-label` potrjeni v zgenerirani CSS.
 
@@ -22,13 +24,11 @@
 
 **2026-08-03 11:58:** T3.1: Step components (CategoryPicker, RegionPicker, NoShowInput) fully implemented as controlled components. Created pure business logic helpers in src/lib/stepHelpers.ts with 9 passing Vitest tests. Components are responsive, support dark mode, and typecheck successfully.
 
-**2026-08-03 11:54:** T2.2: Dynamic SEO metadata (`generateMetadata`) in `src/app/page.tsx` fully implemented. Extracted a pure `buildMetadata(state)` and verified all 4 acceptance criteria via Vitest tests. Next.js builds, lint checks, and typechecks pass.
-
 **2026-08-03 09:34:** Engage run materialized
 
 ## What's Next
 
-T2.1 — Skupni slogovni primitivi in prenova izbirnikov
+T3.1 — Fokus ring, kontrast in dotikalne tarče
 
 ## Blockers
 

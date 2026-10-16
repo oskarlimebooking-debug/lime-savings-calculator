@@ -22,3 +22,10 @@ Structured reasoning captured from agent runs.
 - decision: Ostal sem pri tokenih in CSS spremenljivkah; nisem prepisoval `rounded-2xl`/`shadow-sm`/`bg-white` razredov v komponentah — to je delo prenove komponent (T2.x), tokeni so pogoj zanjo.
 - insight: Svetlo ozadje telesa se je spremenilo z bele na canvas `#FAFAFA`, kar je po specifikaciji, a je edina vidna sprememba te naloge; kartice so bele šele, ko jih komponente tako označijo.
 - assumption: `--shadow-modal: none` v temnem bloku štejem kot skladno z AC4 (noben `box-shadow` ni definiran); test to tudi izrecno preverja.
+
+## T2.2 — Prenova rezultatskega panela in grafa — 2026-10-16 21:19
+
+- insight: `getRoiClass` vrača `roi-success`/`roi-warning`, kar ni Tailwind razred in trenutno ničesar ne pobarva — barvo nosijo podvojeni `roiTier === "green"` ternarji v panelu. Tega nisem popravil, ker AC1 pripne točno vrnjeno vrednost in AC4 zahteva, da `ResultsPanel.test.tsx` še vedno najde niz `roi-success` v markupu; čiščenje te podvojitve priporočam v T3.2.
+- insight: AC1 govori o meji 2 meseca, implementacija (in opis naloge: "ne mejnih vrednosti") pa ima mejo 1 mesec/30 dni. Meje nisem premikal; obstoječi test pokriva oboje (`1` → success, `2` → warning), zato AC drži brez spremembe logike.
+- decision: Majhna besedila sem dal na `ink-muted` (#5C5C5C), ne na `ink-faint` (#8C8C8C), ker bi slednji pri 11–12px padel na WCAG AA; natančna kontrastna revizija je T3.1.
+- assumption: `AutoFitAmount` nisem spreminjal — velikost že podeduje iz žetona v `className`, logika skaliranja je neodvisna od palete.

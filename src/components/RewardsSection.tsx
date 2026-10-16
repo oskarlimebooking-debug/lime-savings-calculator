@@ -9,9 +9,9 @@ import { Lang, DEFAULT_LANG, getTranslations, LANG_LOCALE } from "../lib/i18n";
 
 /**
  * When each card stops spinning, in ms. Staggered so every reveal reads as its
- * own beat; the last card lands at 4,6 s.
+ * own beat, but kept short per the Lime motion rules — the last card lands at 2,4 s.
  */
-const SETTLE_MS = [3200, 3900, 4600] as const;
+export const SETTLE_MS = [1400, 1900, 2400] as const;
 
 export interface RewardsSectionProps {
   yearlySaving: number;
