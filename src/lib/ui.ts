@@ -92,3 +92,29 @@ export function inputClass(): string {
     "focus:border-sage-500 transition-all duration-200"
   );
 }
+
+/**
+ * Lime Booking accent palette (vanilija, mango, breskev, bezev, sivka, hortenzija,
+ * plavica). Mirrors `colors.accent` in `tailwind.config.ts`; `ui.test.ts` asserts the two stay
+ * in sync, so the chart can use exact hexes for flat fills without drifting from the
+ * token definition.
+ */
+export const ACCENT = {
+  vanilla: "#FDF6DD",
+  mango: "#EDA300",
+  peach: "#F6DFDF",
+  beige: "#F7F3FA",
+  lavender: "#A881C6",
+  hydrangea: "#E0ECF4",
+  cornflower: "#2D8CCA",
+} as const;
+
+export type ChartSeries = "loss" | "saving";
+
+/**
+ * Flat fill colour per chart series — no gradients, one accent hue each: the saving
+ * carries the stronger plavica, the residual loss the quieter sivka.
+ */
+export function chartSeriesColor(series: ChartSeries): string {
+  return series === "saving" ? ACCENT.cornflower : ACCENT.lavender;
+}

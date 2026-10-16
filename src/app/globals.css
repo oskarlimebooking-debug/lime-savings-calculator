@@ -5,11 +5,11 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --accent: #16a34a;
-  --accent-light: #dcfce7;
-  --bg: #f8faf9;
-  --card: #fff;
-  --warning: #f59e0b;
+  --accent: #74B587;
+  --accent-light: rgba(116, 181, 135, 0.14);
+  --bg: #FAFAFA;
+  --card: #FFFFFF;
+  --warning: #EDA300;
 }
 
 @media (prefers-color-scheme: dark) {

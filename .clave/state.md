@@ -1,12 +1,12 @@
 # Current State
 
-> Last updated: 2026-10-16 15:04
+> Last updated: 2026-10-16 23:05
 
 ## What Was Just Done
 
-**2026-10-16 17:05:** T2.1: Skupni slogovni primitivi in prenova izbirnikov zaključeni. Dodan `src/lib/ui.ts` s čistimi funkcijami `buttonClass` / `cardClass` / `badgeClass` / `chipClass` / `inputClass`, nova `sage` barvna lestvica v `tailwind.config.ts` (500 = CTA `#548F68`) in `./src/lib/**` v Tailwind `content`, da se razredi iz knjižnice dejansko generirajo. Vseh 7 izbirnikov (CategoryPicker, RegionPicker, PackagePicker, AddonsPicker, NoShowInput, PriceInput, LanguagePicker) zdaj uporablja primitive; v njih ni več nobenega `lime-` razreda. Brez sprememb logike ali props vmesnikov. 33 novih testov v `src/lib/ui.test.ts`; skupno 143 testov, typecheck, lint in produkcijski build zeleni. Prisotnost sage utilityjev preverjena tudi v zgenerirani CSS datoteki.
+**2026-10-16 23:05:** T1.1: Barvni tokeni zamenjani z Lime Booking paleto. V `tailwind.config.ts` dodan `brand` ključ (sage `#74B587`, cta `#548F68`, ctaHover `#447856`, ctaPressed `#3D6D4D`) ter semantični `focus`, `danger` `#F46969` in `default` `#8C8C8C`; `success` `#4FB870` in `warning` `#EDA300` sta že ustrezala specifikaciji. `accent` paleta zamenjana s pravo blagovno (vanilija, mango, breskev, bežev, sivka, hortenzija, plavica — 7 unikatnih hexov), `ACCENT` v `src/lib/ui.ts` usklajen z njo, graf zato zdaj riše s plavico in sivko iz blagovne palete. Stara `lime.*` lestvica je zdaj samo alias `sage` lestvice, tako da nemigrirani `lime-*` razredi (Calculator, RewardsSection, RewardCard, InfoModal) brez sprememb kode renderajo brand zeleno — brez vzporednega sistema. V `globals.css` posodobljene `--accent`, `--accent-light` (sage wash), `--bg #FAFAFA`, `--card #FFFFFF`, `--warning #EDA300`. `src/tailwind.config.test.ts` razširjen na 6 testov (AC1–AC4 + alias); 159 testov, typecheck, lint in build zeleni, v zgenerirani CSS je `.bg-lime-600` zdaj sage `#427354`.
 
-**2026-08-03 11:51:** T2.1: URL param serialization/parsing (`lib/urlState.ts`) fully implemented, supporting multi-format parsing, serialization, validation, and safe defaults. All 4 acceptance criteria verified via Vitest tests. Linter, typechecking, and Next.js builds green.
+**2026-10-16 17:05:** T2.1: Skupni slogovni primitivi in prenova izbirnikov zaključeni. Dodan `src/lib/ui.ts` s čistimi funkcijami `buttonClass` / `cardClass` / `badgeClass` / `chipClass` / `inputClass`, nova `sage` barvna lestvica v `tailwind.config.ts` (500 = CTA `#548F68`) in `./src/lib/**` v Tailwind `content`, da se razredi iz knjižnice dejansko generirajo. Vseh 7 izbirnikov (CategoryPicker, RegionPicker, PackagePicker, AddonsPicker, NoShowInput, PriceInput, LanguagePicker) zdaj uporablja primitive; v njih ni več nobenega `lime-` razreda. Brez sprememb logike ali props vmesnikov. 33 novih testov v `src/lib/ui.test.ts`; skupno 143 testov, typecheck, lint in produkcijski build zeleni. Prisotnost sage utilityjev preverjena tudi v zgenerirani CSS datoteki.
 
 **2026-08-03 12:12:** T4.1: Vercel Analytics integration and deploy configuration fully implemented. Added a typed `track` wrapper with a closed union event type (`copy_link` | `cta_click`) supporting custom sink injection. Set up `vercel.json` deployment rules, updated `README.md` documentation, added the CTA button linking to `LIME_BOOKING_URL` with click tracking, and verified with 3 passing tests in Vitest. Production build, typecheck, and linter check pass cleanly.
 
@@ -28,7 +28,7 @@
 
 ## What's Next
 
-T2.1 zaključen. Preostale naloge iz backloga po vrsti; nov CTA sage žeton je zdaj na voljo za prenovo preostalih komponent (Calculator, ResultsPanel, RewardsSection), ki še uporabljajo `lime-` razrede.
+T2.2 — Prenova rezultatskega panela in grafa
 
 ## Blockers
 
