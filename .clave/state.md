@@ -1,8 +1,10 @@
 # Current State
 
-> Last updated: 2026-10-16 21:11
+> Last updated: 2026-10-16 21:15
 
 ## What Was Just Done
+
+**2026-10-16 23:18:** T2.2: Rezultatski panel in graf prenovljena po Lime hierarhiji. Strukturni del (glavna številka v `text-h1`, podporne vrednosti v `body-m`, viri v `caption`, `AutoFitAmount`, accent paleta grafa, brez gradientov, `getRoiClass` → `roi-success`/`roi-warning`) je bil že v delovnem drevesu in je pripotoval v commit T1.2 — preveril sem, da AC1–AC4 res držijo (testi zeleni), zato so kljukice obstale. V tem koraku dodana še žetonizacija obeh komponent: generične sivine (`gray-*`, `zinc-*`) zamenjane s `surface-*` / `ink-*` / `line` žetoni iz T1.3, radiji z `rounded-card` / `rounded-control` / `rounded-pill`, naslovi in oznake prestavljeni na lestvico iz T1.2 (`text-h2`, `text-h3`, `text-label`, `text-subtitle`), odstranjeni `shadow-xl shadow-gray-100/40` in `backdrop-blur-xl` — panel je zdaj ploska površina, elevacija izhaja samo iz svetlosti. `getRoiClass` in meje ROI nedotaknjene. 5 novih testov v `src/lib/ui.test.ts` (brez sivin, brez senc, žetoni radijev); skupno 173 testov, typecheck (exit 0), lint in build zeleni, `rounded-card`/`text-h2`/`text-label` potrjeni v zgenerirani CSS.
 
 **2026-10-16 23:13:** T1.3: Površinski sloji, radiji, senčenje in temna tema dodani kot tokeni. V `tailwind.config.ts`: `colors.surface` z vsemi osmimi stopnjami (svetlo canvas `#FAFAFA` → card `#FFFFFF` → panel `#F5F5F7` → subtle `#F0F0F0`, temno `#121413` → `#1B1E1C` → `#232624` → `#2B2E2C`), `colors.line` (hairline `#F0F0F0` / `#2E322F`), `colors.ink` (besedilo `#181818`/`#5C5C5C`/`#8C8C8C` in temni ekvivalenti), `borderRadius` (`card: 12px`, `control: 8px`, `pill: 9999px`), edina senca `boxShadow.modal` za modale/popover in dva 4pt razmika (`4.5`, `13`), ki jih privzeta lestvica nima. V `globals.css` so vse površine, hairline in besedilni odtenki zdaj CSS spremenljivke, `prefers-color-scheme: dark` blok pa je razširjen z vsemi (prej samo `--background`/`--foreground`); `--shadow-modal` se v temni temi sesede na `none`, ker elevacija tam izhaja samo iz svetlosti. Svetli `--background`/`--foreground` poravnana s canvas/primary besedilom (`#FAFAFA`/`#181818`). Nov `src/surfaces.test.ts` (5 testov, AC1–AC4 + svetla senca); skupno 168 testov, typecheck, lint in build zeleni.
 
@@ -22,13 +24,11 @@
 
 **2026-08-03 11:54:** T2.2: Dynamic SEO metadata (`generateMetadata`) in `src/app/page.tsx` fully implemented. Extracted a pure `buildMetadata(state)` and verified all 4 acceptance criteria via Vitest tests. Next.js builds, lint checks, and typechecks pass.
 
-**2026-08-03 11:46:** T1.3: Pure calculation engine (`lib/calc.ts`) fully implemented, including period normalization, saving calculations, and ROI tiering. All 5 acceptance criteria verified with extensive Vitest tests.
-
 **2026-08-03 09:34:** Engage run materialized
 
 ## What's Next
 
-T2.2 — Prenova rezultatskega panela in grafa
+T2.1 — Skupni slogovni primitivi in prenova izbirnikov
 
 ## Blockers
 

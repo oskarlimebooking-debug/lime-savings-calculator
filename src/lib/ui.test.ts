@@ -191,6 +191,30 @@ describe("prenovljeni rezultatski panel in graf (T2.2)", () => {
     expect(src).toMatch(/id="results-footnote"[\s\S]*?text-caption/);
   });
 
+  it.each(["SavingsChart", "ResultsPanel"])(
+    "%s stoji na površinskih/besedilnih žetonih, ne na generičnih sivinah",
+    (name) => {
+      const src = readComponent(name);
+      expect(src).not.toMatch(/\b(?:bg|text|border)-gray-/);
+      expect(src).not.toMatch(/\bdark:(?:bg|text|border)-zinc-/);
+      expect(src).toMatch(/(?:bg|text|border)-(?:surface|ink|line)/);
+    },
+  );
+
+  it.each(["SavingsChart", "ResultsPanel"])(
+    "%s je ploska površina — brez senc (elevacija samo s svetlostjo)",
+    (name) => {
+      expect(readComponent(name)).not.toMatch(/shadow-/);
+    },
+  );
+
+  it("ResultsPanel uporablja žetone radijev (kartica 12px, kontrola 8px)", () => {
+    const src = readComponent("ResultsPanel");
+    expect(src).toContain("rounded-card");
+    expect(src).toContain("rounded-control");
+    expect(src).not.toMatch(/rounded-(?:2xl|3xl|xl)\b/);
+  });
+
   it("SavingsChart barva stolpce prek pomožne funkcije, ne prek razredov", () => {
     const src = readComponent("SavingsChart");
     expect(src).toContain('chartSeriesColor("saving")');

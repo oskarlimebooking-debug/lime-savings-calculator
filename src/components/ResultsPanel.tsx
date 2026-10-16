@@ -38,52 +38,52 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
   return (
     <div
       id="results-panel-container"
-      className="w-full bg-white dark:bg-zinc-900/40 backdrop-blur-xl border border-gray-100 dark:border-zinc-800/80 rounded-3xl p-6 md:p-8 shadow-xl shadow-gray-100/40 dark:shadow-none flex flex-col gap-6 md:gap-8"
+      className="w-full bg-surface-card dark:bg-surface-dark-card border border-line dark:border-line-dark rounded-card p-6 md:p-8 flex flex-col gap-6 md:gap-8"
     >
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center gap-1.5">
-          <h2 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-gray-100 tracking-tight">
+          <h2 className="text-h2 text-ink dark:text-ink-dark">
             {t.results.heading}
           </h2>
           {onInfoClick && <InfoTrigger onClick={onInfoClick} label={t.info.triggerLabel} />}
         </div>
-        <p className="text-body-m text-gray-400 dark:text-gray-500">{t.results.subheading}</p>
+        <p className="text-body-m text-ink-muted dark:text-ink-dark-muted">{t.results.subheading}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         {/* Estimated Revenue Loss Panel */}
-        <div className="bg-gray-50/50 dark:bg-zinc-800/20 border border-gray-100 dark:border-zinc-800/50 rounded-2xl p-5 flex flex-col gap-4">
+        <div className="bg-surface-panel dark:bg-surface-dark-panel border border-line dark:border-line-dark rounded-card p-5 flex flex-col gap-4">
           <div className="flex flex-col">
-            <span className="text-caption font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+            <span className="text-label text-ink-muted dark:text-ink-dark-muted uppercase">
               {t.results.monthlyLoss}
             </span>
             <div key={monthlyLoss} className="mt-1.5">
               <AutoFitAmount
                 id="results-monthly-loss"
                 text={formatEUR(monthlyLoss, locale)}
-                className="text-body-m font-bold text-gray-800 dark:text-gray-100 popIn"
+                className="text-h3 text-ink dark:text-ink-dark popIn"
               />
             </div>
           </div>
 
-          <div className="h-px bg-gray-100 dark:bg-zinc-800/50 w-full" />
+          <div className="h-px bg-line dark:bg-line-dark w-full" />
 
           <div className="flex flex-col">
-            <span className="text-caption font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+            <span className="text-label text-ink-muted dark:text-ink-dark-muted uppercase">
               {t.results.yearlyLoss}
             </span>
             <div key={yearlyLoss} className="mt-1.5">
               <AutoFitAmount
                 id="results-yearly-loss"
                 text={formatEUR(yearlyLoss, locale)}
-                className="text-body-m font-bold text-gray-800 dark:text-gray-100 popIn"
+                className="text-h3 text-ink dark:text-ink-dark popIn"
               />
             </div>
           </div>
         </div>
 
         {/* Potential Savings Panel */}
-        <div className="bg-success-soft/60 dark:bg-success/5 border border-success/20 dark:border-success/20 rounded-2xl p-5 flex flex-col justify-between gap-4">
+        <div className="bg-success-soft/60 dark:bg-success/5 border border-success/20 dark:border-success/20 rounded-card p-5 flex flex-col justify-between gap-4">
           <div className="flex flex-col">
             <span className="text-caption font-bold text-success-strong dark:text-success uppercase tracking-wider">
               {t.results.yearlySaving}
@@ -105,7 +105,7 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
       {/* ROI Highlight Card */}
       <div
         id="results-roi-card"
-        className={`p-5 rounded-2xl border transition-all duration-300 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 ${
+        className={`p-5 rounded-card border transition-all duration-300 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 ${
           roiTier === "green"
             ? "bg-success-soft/70 border-success/30 dark:bg-success/5 dark:border-success/30"
             : "bg-warning-soft/70 border-warning/30 dark:bg-warning/5 dark:border-warning/30"
@@ -113,7 +113,7 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
       >
         <div className="flex items-start gap-3">
           <div
-            className={`p-2.5 rounded-xl ${
+            className={`p-2.5 rounded-control ${
               roiTier === "green"
                 ? "bg-success text-white"
                 : "bg-warning text-white"
@@ -150,7 +150,7 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
           <div className="flex flex-col">
             <span
               id="results-roi-label"
-              className={`text-lg font-bold tracking-tight ${
+              className={`text-h3 ${
                 roiTier === "green"
                   ? "text-success-strong dark:text-success"
                   : "text-warning-strong dark:text-warning"
@@ -201,14 +201,14 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({
         </div>
       </div>
 
-      <div className="h-px bg-gray-100 dark:bg-zinc-800/60 w-full" />
+      <div className="h-px bg-line dark:bg-line-dark w-full" />
 
       <SavingsChart yearlyLoss={yearlyLoss} yearlySaving={yearlySaving} lang={lang} />
 
       {/* Footnote */}
       <footer
         id="results-footnote"
-        className="text-caption text-gray-400 dark:text-gray-500 border-t border-gray-100 dark:border-zinc-800/60 pt-4"
+        className="text-caption text-ink-muted dark:text-ink-dark-muted border-t border-line dark:border-line-dark pt-4"
       >
         {footnote}
       </footer>

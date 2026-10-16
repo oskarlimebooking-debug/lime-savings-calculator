@@ -15,3 +15,10 @@ Structured reasoning captured from agent runs.
 - insight: Obstoječi žetoni `h1`/`body-m`/`caption` so z novo lestvico dobili manjše, px vrednosti (h1 2.25rem → 24px, body-m 15px → 14px), zato sta `ResultsPanel` in `SavingsChart` zdaj vizualno manjša. Razredi so isti, zato nisem spreminjal nobene komponente — če je glavna številka prihranka zdaj premajhna, je to stvar T2.2.
 - assumption: `label` nima `textTransform` v žetonu, ker ga Tailwind `fontSize` ne podpira — uppercase ostane kot `uppercase` utility ob `text-label`.
 - risk: Build zdaj ob prvem prevodu potrebuje dostop do fonts.googleapis.com (nato ga Next cachira); CI brez omrežja bi padel.
+
+## T1.3 — Površine, radiji, senčenje in temna tema — 2026-10-16 21:14
+
+- decision: Temne stopnje sem dal v isti `surface` ključ s predpono `dark-` (ne v ločen `surfaceDark`), ker AC2 zahteva vse osem v `colors.surface`; v komponentah to pomeni `dark:bg-surface-dark-card`.
+- decision: Ostal sem pri tokenih in CSS spremenljivkah; nisem prepisoval `rounded-2xl`/`shadow-sm`/`bg-white` razredov v komponentah — to je delo prenove komponent (T2.x), tokeni so pogoj zanjo.
+- insight: Svetlo ozadje telesa se je spremenilo z bele na canvas `#FAFAFA`, kar je po specifikaciji, a je edina vidna sprememba te naloge; kartice so bele šele, ko jih komponente tako označijo.
+- assumption: `--shadow-modal: none` v temnem bloku štejem kot skladno z AC4 (noben `box-shadow` ni definiran); test to tudi izrecno preverja.
