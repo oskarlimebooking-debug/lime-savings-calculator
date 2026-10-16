@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 184 40" role="img" aria-label="Lime Booking">
+  <title>Lime Booking</title>
+  <!-- Mark: isti petal kot favicon, da sta znamki ena sama oblika. -->
+  <circle cx="20" cy="20" r="20" fill="#548F68"/>
+  <path d="M20 10c5 3 7.5 6 7.5 9.5S24.8 27.5 20 28.5c-4.8-1-7.5-5.5-7.5-9S15 13 20 10z" fill="#FFFFFF"/>
+  <path d="M20 12.5v16" stroke="#548F68" stroke-width="1.8" stroke-linecap="round"/>
+  <!-- Wordmark je besedilo, ne pot: en sam vir za Inter, brez podvojenih obrisov. -->
+  <text x="50" y="26" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="600" letter-spacing="-0.25" fill="#181818">Lime Booking</text>
+</svg>

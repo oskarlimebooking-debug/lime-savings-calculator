@@ -37,3 +37,11 @@ Structured reasoning captured from agent runs.
 - insight: AC2 preverja le animacije, ne CSS prehodov — graf še vedno uporablja `transition-all duration-700`, ki ga reduced-motion blok ne izklopi. To je kandidat za T3.1 (dostopnost).
 - fix: Prvi osnutek testa je uporabljal `String.matchAll`, kar pri tem `tsconfig` (ES5 cilj) pade na TS2802; nadomestil sem ga z `exec` zanko, da typecheck ostane zelen.
 - risk: Kaskada nagrad je zdaj skoraj dvakrat hitrejša; če je bil 4,6 s namenoma dramatičen, je to vidna sprememba občutka, ne le čiščenje.
+
+## T3.1 — Fokus ring, kontrast in dotikalne tarče — 2026-10-16 21:31
+
+- decision: Verified the previous session's working-tree changes instead of redoing them — tests, lint, typecheck and build all green, so the work was complete, not half-done.
+- insight: `focus-visible` rather than `focus` means the sage ring appears only for keyboard navigation; the a11y test actively forbids reintroducing `focus:ring`, so the pattern can't regress silently.
+- assumption: The token hexes hardcoded in `a11y.test.ts` (`LIGHT`/`DARK`/`INK`) mirror `tailwind.config.ts`; nothing asserts that mapping, so a token edit could leave the contrast test passing against stale values.
+- risk: `contrastRatio` ignores alpha, so semi-transparent surfaces (chip wash, reward hover) are not covered by the AA loop.
+- fix: Reordered two out-of-sequence entries in `state.md` so the log stays newest-first; no content changed.

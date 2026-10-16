@@ -74,7 +74,7 @@ export const RewardCard: React.FC<RewardCardProps> = ({
       target="_blank"
       rel="noopener noreferrer"
       onClick={() => onSelect?.(pick)}
-      className="rewardSettle group flex flex-col gap-2 h-full min-h-36 p-5 rounded-2xl border border-gray-100 dark:border-zinc-800/80 bg-gray-50/40 dark:bg-zinc-800/20 transition-all hover:border-lime-200 dark:hover:border-lime-900/50 hover:bg-lime-50/30 dark:hover:bg-lime-950/10 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sage"
+      className="rewardSettle group flex flex-col gap-2 h-full min-h-36 p-5 rounded-2xl border border-gray-100 dark:border-zinc-800/80 bg-gray-50/40 dark:bg-zinc-800/20 transition-all hover:border-sage-200 dark:hover:border-sage-900/50 hover:bg-sage-50/30 dark:hover:bg-sage-950/10 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sage"
     >
       <span className="text-3xl leading-none" aria-hidden="true">
         {reward.emoji}
@@ -85,12 +85,12 @@ export const RewardCard: React.FC<RewardCardProps> = ({
       </span>
 
       {showsLeftover(pick) && (
-        <span className="text-xs font-medium text-lime-700/80 dark:text-lime-500/70">
+        <span className="text-xs font-medium text-sage-700/80 dark:text-sage-500/70">
           {t.rewards.leftover(formatEUR(leftover, locale))}
         </span>
       )}
 
-      <span className="mt-auto pt-2 text-[11px] text-gray-400 dark:text-gray-500 group-hover:text-lime-700 dark:group-hover:text-lime-400 transition-colors">
+      <span className="mt-auto pt-2 text-[11px] text-gray-400 dark:text-gray-500 group-hover:text-sage-700 dark:group-hover:text-sage-400 transition-colors">
         {t.rewards.at(reward.retailer, formatEUR(totalCost, locale))}
       </span>
 

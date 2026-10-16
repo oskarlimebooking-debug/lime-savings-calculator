@@ -128,9 +128,6 @@ const config: Config = {
           cornflower: '#2D8CCA',
         },
         sage,
-        // Legacy alias: components not yet migrated still use `lime-*` classes,
-        // so the ramp points at sage instead of the generic Tailwind green.
-        lime: sage,
       },
     },
   },

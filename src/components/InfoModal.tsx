@@ -18,7 +18,7 @@ export const InfoTrigger: React.FC<{ onClick: () => void; label?: string }> = ({
     onClick={onClick}
     aria-label={label ?? "Od kod izhajajo te številke?"}
     title={label ?? "Od kod izhajajo te številke?"}
-    className="inline-flex items-center justify-center w-11 h-11 rounded-full text-gray-400 dark:text-gray-500 hover:text-lime-600 dark:hover:text-lime-400 hover:bg-lime-50 dark:hover:bg-lime-950/30 transition-colors duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sage"
+    className="inline-flex items-center justify-center w-11 h-11 rounded-full text-gray-400 dark:text-gray-500 hover:text-sage-600 dark:hover:text-sage-400 hover:bg-sage-50 dark:hover:bg-sage-950/30 transition-colors duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sage"
   >
     <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
       <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -98,7 +98,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({ packageSlug, open, onClose
                 <span>{t.info.basicBullet(basicPct, basicText.name)}</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="mt-1 w-1.5 h-1.5 rounded-full bg-lime-500 flex-shrink-0" />
+                <span className="mt-1 w-1.5 h-1.5 rounded-full bg-sage-500 flex-shrink-0" />
                 <span>{t.info.advancedBullet(advancedPct, advancedText.name)}</span>
               </li>
             </ul>

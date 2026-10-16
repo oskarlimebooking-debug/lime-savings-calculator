@@ -48,9 +48,9 @@ test("AC4: accent paleta ima natanko 7 unikatnih hex vrednosti", () => {
   expect(new Set(values).size).toBe(7);
 });
 
-test("stari lime.* zetoni so le alias sage lestvice", () => {
-  const lime = colors?.lime as Record<string, string> | undefined;
+// T3.2: alias je odstranjen — komponente uporabljajo sage neposredno.
+test("stare zelene lestvice ni vec v configu, sage pa drzi CTA zeleno", () => {
   const sage = colors?.sage as Record<string, string> | undefined;
-  expect(lime).toEqual(sage);
-  expect(lime?.["500"]).toBe("#548F68");
+  expect(colors?.lime).toBeUndefined();
+  expect(sage?.["500"]).toBe("#548F68");
 });

@@ -133,6 +133,13 @@ describe("barve grafa (T2.2)", () => {
       | undefined
   )?.accent;
 
+  const colorToken = (name: string) =>
+    (
+      tailwindConfig.theme?.extend?.colors as
+        | Record<string, Record<string, string>>
+        | undefined
+    )?.[name] ?? {};
+
   const SERIES: ChartSeries[] = ["loss", "saving"];
 
   it("accent paleta je definirana v Tailwind configu", () => {
@@ -157,11 +164,18 @@ describe("barve grafa (T2.2)", () => {
     expect(new Set(colors).size).toBe(SERIES.length);
   });
 
-  it("graf ne uporablja zelenih žetonov (lime/sage)", () => {
-    const greens = [...Object.values(ACCENT)].filter((c) =>
-      ["#22c55e", "#16a34a", "#548F68"].includes(c),
+  it("graf ne uporablja zelenih žetonov (sage rampa in brand)", () => {
+    // Zeleni žetoni se berejo iz configa, da straž-test T3.2 v tej datoteki
+    // ne naleti na trdo kodirane hexe stare palete.
+    const greens = [
+      ...Object.values(colorToken("sage")),
+      ...Object.values(colorToken("brand")),
+    ].map((c) => c.toLowerCase());
+    expect(greens.length).toBeGreaterThan(0);
+    const used = Object.values(ACCENT).filter((c) =>
+      greens.includes(c.toLowerCase()),
     );
-    expect(greens).toEqual([]);
+    expect(used).toEqual([]);
   });
 });
 

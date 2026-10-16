@@ -147,10 +147,10 @@ export const RewardsSection: React.FC<RewardsSectionProps> = ({
               aria-busy={isSpinning}
               aria-controls="rewards-list"
               aria-label={t.rewards.shuffleAria}
-              className={`inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-lime-600 dark:bg-lime-500 text-white font-semibold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sage shadow-md shadow-lime-600/10 ${
+              className={`inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-sage-600 dark:bg-sage-500 text-white font-semibold text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sage shadow-md shadow-sage-600/10 ${
                 isSpinning
                   ? "opacity-60 cursor-not-allowed"
-                  : "hover:bg-lime-700 dark:hover:bg-lime-600 active:scale-98"
+                  : "hover:bg-sage-700 dark:hover:bg-sage-600 active:scale-98"
               }`}
             >
               <svg

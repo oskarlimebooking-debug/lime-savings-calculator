@@ -89,15 +89,15 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
         id: "copy-success-toast",
         duration: 3000,
         style: {
-          background: "#16a34a",
+          background: "#548F68",
           color: "#ffffff",
           fontWeight: "600",
           borderRadius: "12px",
-          border: "1px solid #15803d",
+          border: "1px solid #427354",
         },
         iconTheme: {
           primary: "#ffffff",
-          secondary: "#16a34a",
+          secondary: "#548F68",
         },
       });
     } catch {
@@ -123,12 +123,12 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
 
       {/* Hero section / Header */}
       <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16 flex flex-col gap-4">
-        <div className="inline-flex items-center justify-center gap-2 px-3 py-1 bg-lime-50 dark:bg-lime-950/30 text-lime-700 dark:text-lime-400 border border-lime-200/50 dark:border-lime-900/30 rounded-full text-xs font-semibold uppercase tracking-wider w-fit mx-auto">
-          <span className="w-2 h-2 rounded-full bg-lime-500 animate-pulse"></span>
+        <div className="inline-flex items-center justify-center gap-2 px-3 py-1 bg-sage-50 dark:bg-sage-950/30 text-sage-700 dark:text-sage-400 border border-sage-200/50 dark:border-sage-900/30 rounded-full text-xs font-semibold uppercase tracking-wider w-fit mx-auto">
+          <span className="w-2 h-2 rounded-full bg-sage-500 animate-pulse"></span>
           {t.hero.badge}
         </div>
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
-          {t.hero.title} <span className="text-lime-600 dark:text-lime-400">{t.hero.titleHighlight}</span>
+          {t.hero.title} <span className="text-sage-600 dark:text-sage-400">{t.hero.titleHighlight}</span>
         </h1>
         <p className="text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto font-medium">
           {t.hero.subtitle}
@@ -142,7 +142,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
           {/* Step 1: Category Picker */}
           <div className="bg-white dark:bg-zinc-900/20 border border-gray-100 dark:border-zinc-800/80 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col gap-5">
             <div className="flex items-center gap-3">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-lime-100 dark:bg-lime-950/50 text-lime-700 dark:text-lime-400 font-bold text-sm">
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-sage-100 dark:bg-sage-950/50 text-sage-700 dark:text-sage-400 font-bold text-sm">
                 1
               </span>
               <h2 className="text-lg md:text-xl font-bold text-gray-800 dark:text-gray-200">
@@ -159,7 +159,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
           {/* Step 2: Region Picker */}
           <div className="bg-white dark:bg-zinc-900/20 border border-gray-100 dark:border-zinc-800/80 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col gap-5">
             <div className="flex items-center gap-3">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-lime-100 dark:bg-lime-950/50 text-lime-700 dark:text-lime-400 font-bold text-sm">
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-sage-100 dark:bg-sage-950/50 text-sage-700 dark:text-sage-400 font-bold text-sm">
                 2
               </span>
               <h2 className="text-lg md:text-xl font-bold text-gray-800 dark:text-gray-200">
@@ -187,7 +187,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
           {/* Step 3: NoShow Input */}
           <div className="bg-white dark:bg-zinc-900/20 border border-gray-100 dark:border-zinc-800/80 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col gap-5">
             <div className="flex items-center gap-3">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-lime-100 dark:bg-lime-950/50 text-lime-700 dark:text-lime-400 font-bold text-sm">
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-sage-100 dark:bg-sage-950/50 text-sage-700 dark:text-sage-400 font-bold text-sm">
                 3
               </span>
               <h2 className="text-lg md:text-xl font-bold text-gray-800 dark:text-gray-200">
@@ -206,7 +206,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
           {/* Step 4: Package Picker */}
           <div className="bg-white dark:bg-zinc-900/20 border border-gray-100 dark:border-zinc-800/80 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col gap-5">
             <div className="flex items-center gap-3">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-lime-100 dark:bg-lime-950/50 text-lime-700 dark:text-lime-400 font-bold text-sm">
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-sage-100 dark:bg-sage-950/50 text-sage-700 dark:text-sage-400 font-bold text-sm">
                 4
               </span>
               <h2 className="text-lg md:text-xl font-bold text-gray-800 dark:text-gray-200">
@@ -223,7 +223,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
           {/* Step 5: Add-ons */}
           <div className="bg-white dark:bg-zinc-900/20 border border-gray-100 dark:border-zinc-800/80 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col gap-5">
             <div className="flex items-center gap-3">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-lime-100 dark:bg-lime-950/50 text-lime-700 dark:text-lime-400 font-bold text-sm">
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-sage-100 dark:bg-sage-950/50 text-sage-700 dark:text-sage-400 font-bold text-sm">
                 5
               </span>
               <h2 className="text-lg md:text-xl font-bold text-gray-800 dark:text-gray-200">
@@ -286,7 +286,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ initialState }) => {
               onClick={() => track("cta_click")}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-lime-600 dark:bg-lime-500 text-white font-semibold text-sm transition-all hover:bg-lime-700 dark:hover:bg-lime-600 active:scale-98 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sage shadow-md shadow-lime-600/10"
+              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-sage-600 dark:bg-sage-500 text-white font-semibold text-sm transition-all hover:bg-sage-700 dark:hover:bg-sage-600 active:scale-98 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sage shadow-md shadow-sage-600/10"
             >
               {t.actions.cta}
               <svg
