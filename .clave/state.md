@@ -1,8 +1,11 @@
 # Current State
 
-> Last updated: 2026-10-16 21:20
+> Last updated: 2026-10-16 23:31
 
 ## What Was Just Done
+
+**2026-10-16 23:31:** T3.1: Fokus ring, kontrast in dotikalne tarče zaključeni. V `src/lib/ui.ts` dodana čista `contrastRatio(fg, bg)` (WCAG 2.x relativna svetlost, podpira `#RGB` in `#RRGGBB`, vrže napako pri neveljavnem hexu); `BUTTON_BASE` dobi `min-h-11` (44px za vse variante in velikosti), vsi fokus razredi v `buttonClass`/`chipClass`/`inputClass` prestavljeni s `focus:ring-*` na `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sage`, torej ista sage `#74B587` barva v obeh temah in ring samo pri tipkovnici. Enako v komponentah: `Calculator` (kopiraj povezavo + CTA), `RewardsSection` (shuffle), `RewardCard`, `InfoModal` — `InfoTrigger` povečan z `w-8 h-8` na `w-11 h-11`, `NoShowInput` drsnik pa z `h-2.5` na `h-11 py-[1.125rem] bg-clip-content`, tako da je tarča 44px, proga pa ostane vizualno tanka. Nov `src/a11y.test.ts` (7 testov): AC1 (CTA hover/canvas pari), AC2 (zankanih 16 parov ink×površina v obeh temah), AC3 (`min-h-11` za 3×3 variant/velikost) in AC4 (branje `src/components/*.tsx`: nobene `outline-none` brez `focus-visible:ring`, nič starih `focus:ring`, vsak ring je `ring-brand-sage`), plus simetrija in robni primeri `contrastRatio`. Skupno 185 testov, typecheck (exit 0), `npm run lint` in build zeleni; `.ring-brand-sage:focus-visible` z `rgb(116 181 135)` potrjen v zgenerirani CSS.
+
 
 **2026-10-16 23:23:** T2.3: Animacije umirjene po Lime pravilih. V `globals.css` sta `popIn` (0.3s → 0.18s) in `rewardSettle` (0.45s → 0.22s) zdaj `ease-out` — overshoot krivulja `cubic-bezier(0.34, 1.56, 0.64, 1)` je odstranjena iz datoteke, prav tako odbojni 60 % keyframe v `rewardSettle`; `popIn` začne pri `scale(0.98)` namesto `0.95`. `fadeIn` skrajšan na 0.25s. `reelSpin` ohranjen nespremenjen (0.55s linear infinite — funkcionalni del nagradnega mehanizma). Mrtvi `@keyframes slideUp` (brez pravila in brez uporabnika) odstranjeni. `SETTLE_MS` v `RewardsSection.tsx` izvožen in skrajšan s `[3200, 3900, 4600]` na `[1400, 1900, 2400]` — zadnja kartica se ustavi pri 2,4 s namesto 4,6 s. `prefers-reduced-motion` blok pokriva vse štiri aktivne razrede (`reelSpin`, `rewardSettle`, `animate-fadeIn`, `popIn`). Nov `src/motion.test.ts` (5 testov): AC1 (nobena kontrolna točka > 1), AC2 (seznam razredov izpeljan iz datoteke, ne trdo kodiran), AC3 (naraščajoče zaporedje, zadnji ≤ 3000), plus kratka trajanja in nič mrtvih keyframov. `RewardsSection.test.tsx` nespremenjen in zelen (AC4); skupno 178 testov, typecheck (exit 0), lint in build zeleni.
 
@@ -28,7 +31,7 @@
 
 ## What's Next
 
-T3.1 — Fokus ring, kontrast in dotikalne tarče
+T3.2 — Čiščenje stare palete, znamka in DESIGN.md
 
 ## Blockers
 

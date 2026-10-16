@@ -130,7 +130,7 @@ export const NoShowInput: React.FC<NoShowInputProps> = ({
         </div>
       </div>
 
-      {/* Slider Control */}
+      {/* Slider Control: 44px tarca z bg-clip-content, da ostane proga vizualno tanka. */}
       <div className="flex flex-col gap-2 w-full">
         <input
           id="noshow-input-slider"
@@ -139,7 +139,7 @@ export const NoShowInput: React.FC<NoShowInputProps> = ({
           max={limits.max}
           value={value}
           onChange={handleSliderChange}
-          className="w-full h-2.5 bg-gray-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-sage-600 focus:outline-none focus:ring-2 focus:ring-sage-500/30"
+          className="w-full h-11 py-[1.125rem] bg-clip-content bg-surface-subtle dark:bg-surface-dark-subtle rounded-pill appearance-none cursor-pointer accent-sage-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sage"
         />
         <div className="flex justify-between text-xs font-semibold text-gray-400 dark:text-gray-500 px-1">
           <span>{limits.min}</span>

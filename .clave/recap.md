@@ -29,3 +29,11 @@ Structured reasoning captured from agent runs.
 - insight: AC1 govori o meji 2 meseca, implementacija (in opis naloge: "ne mejnih vrednosti") pa ima mejo 1 mesec/30 dni. Meje nisem premikal; obstoječi test pokriva oboje (`1` → success, `2` → warning), zato AC drži brez spremembe logike.
 - decision: Majhna besedila sem dal na `ink-muted` (#5C5C5C), ne na `ink-faint` (#8C8C8C), ker bi slednji pri 11–12px padel na WCAG AA; natančna kontrastna revizija je T3.1.
 - assumption: `AutoFitAmount` nisem spreminjal — velikost že podeduje iz žetona v `className`, logika skaliranja je neodvisna od palete.
+
+## T2.3 — Umirjena animacija po Lime pravilih — 2026-10-16 21:24
+
+- decision: Odboj sem odstranil tudi iz samih keyframov `rewardSettle` (prej `scale(1.02)` pri 60 %), ne le iz krivulje — zamenjava krivulje brez tega bi odboj ohranila.
+- decision: Mrtve `slideUp` keyframe sem izbrisal, ker bi se moj AC2 test (izpeljan seznam) ob njih sicer sklicevalo na animacijo, ki ne obstaja kot razred; dodal sem še test, ki prihodnje mrtve keyframe ujame.
+- insight: AC2 preverja le animacije, ne CSS prehodov — graf še vedno uporablja `transition-all duration-700`, ki ga reduced-motion blok ne izklopi. To je kandidat za T3.1 (dostopnost).
+- fix: Prvi osnutek testa je uporabljal `String.matchAll`, kar pri tem `tsconfig` (ES5 cilj) pade na TS2802; nadomestil sem ga z `exec` zanko, da typecheck ostane zelen.
+- risk: Kaskada nagrad je zdaj skoraj dvakrat hitrejša; če je bil 4,6 s namenoma dramatičen, je to vidna sprememba občutka, ne le čiščenje.

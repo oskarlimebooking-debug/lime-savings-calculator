@@ -74,7 +74,7 @@ export const RewardCard: React.FC<RewardCardProps> = ({
       target="_blank"
       rel="noopener noreferrer"
       onClick={() => onSelect?.(pick)}
-      className="rewardSettle group flex flex-col gap-2 h-full min-h-36 p-5 rounded-2xl border border-gray-100 dark:border-zinc-800/80 bg-gray-50/40 dark:bg-zinc-800/20 transition-all hover:border-lime-200 dark:hover:border-lime-900/50 hover:bg-lime-50/30 dark:hover:bg-lime-950/10 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-lime-500/50"
+      className="rewardSettle group flex flex-col gap-2 h-full min-h-36 p-5 rounded-2xl border border-gray-100 dark:border-zinc-800/80 bg-gray-50/40 dark:bg-zinc-800/20 transition-all hover:border-lime-200 dark:hover:border-lime-900/50 hover:bg-lime-50/30 dark:hover:bg-lime-950/10 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sage"
     >
       <span className="text-3xl leading-none" aria-hidden="true">
         {reward.emoji}

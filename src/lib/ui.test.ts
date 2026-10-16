@@ -39,7 +39,7 @@ describe("buttonClass", () => {
     const cls = buttonClass("primary");
     expect(cls).toContain("bg-sage-500");
     expect(cls).toContain("text-white");
-    expect(cls).toContain("focus:ring-sage-500/50");
+    expect(cls).toContain("focus-visible:ring-brand-sage");
   });
 
   it("AC1: primarni gumb ima hover in pressed stopnji", () => {
@@ -52,7 +52,7 @@ describe("buttonClass", () => {
     const cls = buttonClass("ghost");
     expect(cls).not.toMatch(/(^|\s)bg-/);
     // fokus ring ostane tudi brez polnila
-    expect(cls).toContain("focus:ring-sage-500/50");
+    expect(cls).toContain("focus-visible:ring-brand-sage");
   });
 
   it("velikosti dajo različne nize, privzeto md", () => {
@@ -103,8 +103,8 @@ describe("cardClass", () => {
 
 describe("inputClass", () => {
   it("vnosno polje ima sage fokus stanje", () => {
-    expect(inputClass()).toContain("focus:ring-sage-500/40");
-    expect(inputClass()).toContain("focus:border-sage-500");
+    expect(inputClass()).toContain("focus-visible:ring-brand-sage");
+    expect(inputClass()).toContain("focus-visible:border-sage-500");
   });
 });
 

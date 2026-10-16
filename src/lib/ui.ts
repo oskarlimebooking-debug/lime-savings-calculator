@@ -18,9 +18,10 @@ export type BadgeStatus =
 
 /** Skupna osnova vseh gumbov: postavitev, prehodi in sage fokus ring. */
 const BUTTON_BASE =
-  "inline-flex items-center justify-center gap-2 font-semibold rounded-xl " +
-  "transition-all duration-200 cursor-pointer disabled:opacity-30 " +
-  "disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-sage-500/50";
+  "inline-flex items-center justify-center gap-2 font-semibold rounded-control " +
+  // min-h-11 = 44px: dotikalna tarca po WCAG 2.2 za vse variante in velikosti.
+  "min-h-11 transition-all duration-200 cursor-pointer disabled:opacity-30 " +
+  "disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sage";
 
 const BUTTON_SIZE: Record<ButtonSize, string> = {
   sm: "px-3 py-1.5 text-sm",
@@ -32,11 +33,13 @@ const BUTTON_VARIANT: Record<ButtonVariant, string> = {
   // CTA: polnilo sage-500, bela oznaka, temnejši hover/pressed stopnji.
   primary: "bg-sage-500 text-white hover:bg-sage-600 active:bg-sage-700 shadow-sm",
   secondary:
-    "bg-white dark:bg-zinc-900 text-gray-700 dark:text-gray-200 border " +
-    "border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700",
+    "bg-surface-card dark:bg-surface-dark-card text-ink dark:text-ink-dark border " +
+    "border-line dark:border-line-dark hover:border-sage-400 dark:hover:border-sage-600 " +
+    "active:bg-surface-subtle dark:active:bg-surface-dark-subtle",
   // Ghost nima polnila ozadja — samo barva besedila.
   ghost:
-    "text-gray-600 dark:text-gray-300 hover:text-sage-700 dark:hover:text-sage-300",
+    "text-ink-muted dark:text-ink-dark-muted hover:text-sage-700 dark:hover:text-sage-300 " +
+    "active:text-sage-800 dark:active:text-sage-200",
 };
 
 export function buttonClass(
@@ -73,23 +76,22 @@ export function badgeClass(status: BadgeStatus = "neutral"): string {
 
 // Brez radija: vsak izbirnik si ga določi sam (xl / 2xl / full).
 const CHIP_BASE =
-  "border transition-all duration-300 cursor-pointer " +
-  "focus:outline-none focus:ring-2 focus:ring-sage-500/50";
+  "border transition-all duration-300 cursor-pointer " + "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sage";
 
 export function chipClass(selected: boolean): string {
   return selected
     ? // Sage wash: svetlo polnilo + sage obroba za izbrano stanje.
-      `${CHIP_BASE} border-sage-500 bg-sage-50/60 dark:bg-sage-950/20 text-sage-700 dark:text-sage-300 shadow-sm`
-    : `${CHIP_BASE} border-gray-200 dark:border-gray-800 bg-white dark:bg-zinc-900 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-700`;
+      `${CHIP_BASE} border-sage-500 bg-sage-50/60 dark:bg-sage-950/20 text-sage-700 dark:text-sage-300 hover:border-sage-600 active:border-sage-700`
+    : `${CHIP_BASE} border-line dark:border-line-dark bg-surface-card dark:bg-surface-dark-card text-ink-muted dark:text-ink-dark-muted hover:border-sage-400 dark:hover:border-sage-600 active:bg-surface-subtle dark:active:bg-surface-dark-subtle`;
 }
 
 /** Vnosno polje (številka/besedilo) s sage fokus stanjem. */
 export function inputClass(): string {
   return (
-    "px-3 py-2.5 text-center font-bold text-lg border border-gray-200 " +
-    "dark:border-gray-800 rounded-xl bg-white dark:bg-zinc-900 text-gray-800 " +
-    "dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-sage-500/40 " +
-    "focus:border-sage-500 transition-all duration-200"
+    "px-3 py-2.5 min-h-11 text-center font-bold text-lg border border-line " +
+    "dark:border-line-dark rounded-control bg-surface-card dark:bg-surface-dark-card text-ink " +
+    "dark:text-ink-dark hover:border-sage-400 dark:hover:border-sage-600 " + "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sage " +
+    "focus-visible:border-sage-500 transition-all duration-200"
   );
 }
 
@@ -117,4 +119,38 @@ export type ChartSeries = "loss" | "saving";
  */
 export function chartSeriesColor(series: ChartSeries): string {
   return series === "saving" ? ACCENT.cornflower : ACCENT.lavender;
+}
+
+/** `#RGB` ali `#RRGGBB` -> [r, g, b] v obmocju 0-255. */
+function hexToRgb(hex: string): [number, number, number] {
+  const h = hex.trim().replace("#", "");
+  const full = h.length === 3 ? h.split("").map((c) => c + c).join("") : h;
+  if (!/^[0-9a-fA-F]{6}$/.test(full)) {
+    throw new Error(`Neveljaven hex: ${hex}`);
+  }
+  return [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16)) as [
+    number,
+    number,
+    number,
+  ];
+}
+
+/** Relativna svetlost po WCAG 2.x. */
+function relativeLuminance(hex: string): number {
+  const [r, g, b] = hexToRgb(hex).map((v) => {
+    const c = v / 255;
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+/**
+ * Kontrastno razmerje med dvema barvama po WCAG 2.x (1-21). Vrstni red barv ni
+ * pomemben. Samo neprosojni hexi — prosojnost (`/50` v Tailwindu) tu ni zajeta.
+ */
+export function contrastRatio(fg: string, bg: string): number {
+  const a = relativeLuminance(fg);
+  const b = relativeLuminance(bg);
+  const [lighter, darker] = a > b ? [a, b] : [b, a];
+  return (lighter + 0.05) / (darker + 0.05);
 }
