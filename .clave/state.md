@@ -1,8 +1,10 @@
 # Current State
 
-> Last updated: 2026-10-16 21:08
+> Last updated: 2026-10-16 21:11
 
 ## What Was Just Done
+
+**2026-10-16 23:13:** T1.3: Površinski sloji, radiji, senčenje in temna tema dodani kot tokeni. V `tailwind.config.ts`: `colors.surface` z vsemi osmimi stopnjami (svetlo canvas `#FAFAFA` → card `#FFFFFF` → panel `#F5F5F7` → subtle `#F0F0F0`, temno `#121413` → `#1B1E1C` → `#232624` → `#2B2E2C`), `colors.line` (hairline `#F0F0F0` / `#2E322F`), `colors.ink` (besedilo `#181818`/`#5C5C5C`/`#8C8C8C` in temni ekvivalenti), `borderRadius` (`card: 12px`, `control: 8px`, `pill: 9999px`), edina senca `boxShadow.modal` za modale/popover in dva 4pt razmika (`4.5`, `13`), ki jih privzeta lestvica nima. V `globals.css` so vse površine, hairline in besedilni odtenki zdaj CSS spremenljivke, `prefers-color-scheme: dark` blok pa je razširjen z vsemi (prej samo `--background`/`--foreground`); `--shadow-modal` se v temni temi sesede na `none`, ker elevacija tam izhaja samo iz svetlosti. Svetli `--background`/`--foreground` poravnana s canvas/primary besedilom (`#FAFAFA`/`#181818`). Nov `src/surfaces.test.ts` (5 testov, AC1–AC4 + svetla senca); skupno 168 testov, typecheck, lint in build zeleni.
 
 **2026-10-16 23:09:** T1.2: Tipografija prestavljena z Geist/Arial na Inter. `layout.tsx` zdaj nalaga Inter prek `next/font/google` (`subsets: latin + latin-ext` zaradi šumnikov, `display: swap`, spremenljivka `--font-inter`), telo dobi `font-sans`. V `tailwind.config.ts` dodan `fontFamily.sans` (`var(--font-inter)` → system-ui → sans-serif) in cela Lime univerzalna lestvica kot `fontSize` žetoni: h1 24/32·600·−0.25px, h2 20/28, h3 18/26, h4 16/22, body-l 16/24, body-m 14/21, subtitle 13/18, caption 12/17, button 14/17, label 11/15·0.4px. Stari žetoni h1/body-m/caption so dobili nove (manjše, px) vrednosti, zato so se `ResultsPanel` in `SavingsChart` vizualno pomanjšali — razredi ostajajo isti, brez sprememb komponent. `globals.css` ne uporablja več Ariala. Geist woff datoteki odstranjeni z `git rm`. Nov `src/typography.test.ts` (4 testi, AC1–AC4); skupno 163 testov, typecheck, lint in build zeleni, Inter se v buildu self-hosta kot woff2.
 
@@ -26,7 +28,7 @@
 
 ## What's Next
 
-T1.3 — Površine, radiji, senčenje in temna tema
+T2.2 — Prenova rezultatskega panela in grafa
 
 ## Blockers
 

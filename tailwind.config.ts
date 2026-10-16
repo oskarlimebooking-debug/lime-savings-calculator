@@ -27,6 +27,21 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      borderRadius: {
+        card: '12px',
+        control: '8px',
+        pill: '9999px',
+      },
+      boxShadow: {
+        // The only elevation shadow in the system, and only in the light theme:
+        // modals and popovers. Cards and panels lift by surface lightness.
+        modal: '0 12px 32px -8px rgba(24, 24, 24, 0.18)',
+      },
+      spacing: {
+        // 4pt rhythm fillers Tailwind's default scale lacks.
+        4.5: '1.125rem',
+        13: '3.25rem',
+      },
       fontFamily: {
         // Inter is loaded in src/app/layout.tsx and exposed as --font-inter.
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
@@ -59,6 +74,32 @@ const config: Config = {
           ctaPressed: '#3D6D4D',
         },
         focus: '#74B587',
+        // Lime surface layers. Elevation is carried by lightness, not shadow:
+        // canvas -> card -> panel -> subtle fill, light and dark separately.
+        surface: {
+          canvas: '#FAFAFA',
+          card: '#FFFFFF',
+          panel: '#F5F5F7',
+          subtle: '#F0F0F0',
+          'dark-canvas': '#121413',
+          'dark-card': '#1B1E1C',
+          'dark-panel': '#232624',
+          'dark-subtle': '#2B2E2C',
+        },
+        // Hairline dividers, one per theme.
+        line: {
+          DEFAULT: '#F0F0F0',
+          dark: '#2E322F',
+        },
+        // Text ramp: primary / secondary / tertiary per theme.
+        ink: {
+          DEFAULT: '#181818',
+          muted: '#5C5C5C',
+          faint: '#8C8C8C',
+          'dark': '#F2F3F1',
+          'dark-muted': '#B1B5B2',
+          'dark-faint': '#8B8F8D',
+        },
         danger: '#F46969',
         default: '#8C8C8C',
         // ROI status tokens. The DEFAULT values are the spec hexes; `strong` is

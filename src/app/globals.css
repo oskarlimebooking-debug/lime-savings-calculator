@@ -3,19 +3,40 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* --background/--foreground drive the body; they mirror the canvas and
+     primary-text layers of the surface scale. */
+  --background: #FAFAFA;
+  --foreground: #181818;
   --accent: #74B587;
   --accent-light: rgba(116, 181, 135, 0.14);
   --bg: #FAFAFA;
   --card: #FFFFFF;
+  --panel: #F5F5F7;
+  --subtle: #F0F0F0;
+  --line: #F0F0F0;
+  --text: #181818;
+  --text-muted: #5C5C5C;
+  --text-faint: #8C8C8C;
   --warning: #EDA300;
+  /* The only shadow in the system: light-theme modals and popovers. */
+  --shadow-modal: 0 12px 32px -8px rgba(24, 24, 24, 0.18);
 }
 
+/* Dark theme: elevation comes from surface lightness only, so this block
+   deliberately defines no box-shadow — --shadow-modal collapses to none. */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #121413;
+    --foreground: #F2F3F1;
+    --bg: #121413;
+    --card: #1B1E1C;
+    --panel: #232624;
+    --subtle: #2B2E2C;
+    --line: #2E322F;
+    --text: #F2F3F1;
+    --text-muted: #B1B5B2;
+    --text-faint: #8B8F8D;
+    --shadow-modal: none;
   }
 }
 
