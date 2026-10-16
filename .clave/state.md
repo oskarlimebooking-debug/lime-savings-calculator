@@ -26,7 +26,7 @@
 
 ## What's Next
 
-T1.2 — Inter tipografska lestvica namesto Geist/Arial
+T1.3 — Površine, radiji, senčenje in temna tema
 
 ## Blockers
 
