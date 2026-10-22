@@ -1,12 +1,10 @@
 # Current State
 
-> Last updated: 2026-10-16 23:37
+> Last updated: 2026-10-16 21:39
 
 ## What Was Just Done
 
 **2026-10-16 23:37:** T3.2: Stara generična zelena odstranjena, znamka in DESIGN.md dodana. Vseh 52 `lime-*` razredov v `Calculator`, `RewardsSection`, `RewardCard` in `InfoModal` preimenovanih v `sage-*` — ker je bil `lime` v configu samo alias `sage` lestvice, je sprememba vizualno ničelna (v zgenerirani CSS je `bg-sage-600` zdaj `rgb(66 115 84)`, enaka vrednost kot prej pri `bg-lime-600`), nato pa je alias `lime: sage` iz `tailwind.config.ts` odstranjen, da se nanj ni več mogoče nasloniti. Toast v `Calculator` je dobil `#548F68` (sage-500) in obrobo `#427354` namesto `#16a34a`/`#15803d`. `metadata` v `layout.tsx` ni več "Create Next App": naslov "Lime Booking — kalkulator prihranka", slovenski opis in `icons.icon` → `/favicon-circle.svg` (per-stanje metapodatke še naprej prepiše `generateMetadata` v `page.tsx`). Nova `public/logo-primary.svg` (petal + Inter wordmark) in `public/favicon-circle.svg` (isti petal v krogu, berljiv pri 16px), obe v CTA zeleni iz žetonov. Nov `DESIGN.md` (99 vrstic) z razdelki Barve / Tipografija / Površine / Prepovedi, izpeljanimi iz dejanskih žetonov. Nov straž-test `src/brand.test.ts` (9 testov, AC1–AC4): rekurzivno prečeše `src/`, prepovedane nize sestavi iz delov, da ne naleti nase, in ob regresiji izpiše datoteko in najdeni niz (preverjeno z začasno vstavljenim `bg-lime-500 #16a34a` v `data.ts` — test je padel in imenoval datoteko). Dva obstoječa testa prilagojena odstranjenemu aliasu: `tailwind.config.test.ts` zdaj trdi, da `colors.lime` ne obstaja, `ui.test.ts` pa zelene žetone bere iz configa namesto iz trdo kodiranih hexov. Skupno 194 testov; `npm run lint`, `npm run typecheck`, `npm run test` in `npm run build` vsi exit 0 (AC5).
-
-**2026-08-03 12:03:** T3.2: ResultsPanel component and pure helpers (formatEUR, roiLabel, getRoiClass) fully implemented and tested. Added 6 new unit/component tests in vitest, and configured vitest to handle JSX with Oxc. Passed all linter, typecheck, and production build checks.
 
 **2026-10-16 23:31:** T3.1: Fokus ring, kontrast in dotikalne tarče zaključeni. V `src/lib/ui.ts` dodana čista `contrastRatio(fg, bg)` (WCAG 2.x relativna svetlost, podpira `#RGB` in `#RRGGBB`, vrže napako pri neveljavnem hexu); `BUTTON_BASE` dobi `min-h-11` (44px za vse variante in velikosti), vsi fokus razredi v `buttonClass`/`chipClass`/`inputClass` prestavljeni s `focus:ring-*` na `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sage`, torej ista sage `#74B587` barva v obeh temah in ring samo pri tipkovnici. Enako v komponentah: `Calculator` (kopiraj povezavo + CTA), `RewardsSection` (shuffle), `RewardCard`, `InfoModal` — `InfoTrigger` povečan z `w-8 h-8` na `w-11 h-11`, `NoShowInput` drsnik pa z `h-2.5` na `h-11 py-[1.125rem] bg-clip-content`, tako da je tarča 44px, proga pa ostane vizualno tanka. Nov `src/a11y.test.ts` (7 testov): AC1 (CTA hover/canvas pari), AC2 (zankanih 16 parov ink×površina v obeh temah), AC3 (`min-h-11` za 3×3 variant/velikost) in AC4 (branje `src/components/*.tsx`: nobene `outline-none` brez `focus-visible:ring`, nič starih `focus:ring`, vsak ring je `ring-brand-sage`), plus simetrija in robni primeri `contrastRatio`. Skupno 185 testov, typecheck (exit 0), `npm run lint` in build zeleni; `.ring-brand-sage:focus-visible` z `rgb(116 181 135)` potrjen v zgenerirani CSS.
 
@@ -30,7 +28,7 @@
 
 ## What's Next
 
-Engage run zaključen — vse naloge T1.1–T3.2 iz .clave/backlog.md so done (T3.3 in T4.1 sta bila zaključena v prejšnjem runu). Naslednji korak je nova naloga oz. vizualni pregled v brskalniku.
+Run complete
 
 ## Blockers
 

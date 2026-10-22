@@ -45,3 +45,11 @@ Structured reasoning captured from agent runs.
 - assumption: The token hexes hardcoded in `a11y.test.ts` (`LIGHT`/`DARK`/`INK`) mirror `tailwind.config.ts`; nothing asserts that mapping, so a token edit could leave the contrast test passing against stale values.
 - risk: `contrastRatio` ignores alpha, so semi-transparent surfaces (chip wash, reward hover) are not covered by the AA loop.
 - fix: Reordered two out-of-sequence entries in `state.md` so the log stays newest-first; no content changed.
+
+## T3.2 — Čiščenje stare palete, znamka in DESIGN.md — 2026-10-16 21:38
+
+- decision: Migrated `lime-*` → `sage-*` and deleted the alias rather than only scrubbing the three literal strings AC1 names — the alias was the thing that let old class names keep working, and removing it is what actually prevents regression.
+- insight: The alias made the rename safe and provable: same ramp, same hexes, so the diff is large but behaviourally empty, which I confirmed against the built CSS rather than assuming.
+- insight: A guard test that scans `src/` lives in `src/`, so it would trip over its own literals; assembling the needles from parts is what keeps it honest, and I checked it still fails on a real regression instead of trusting that it would.
+- assumption: `public/` did not exist before, so no favicon or logo was being overwritten; the petal mark is my interpretation of "Lime petal" — there was no reference asset in the repo to match.
+- risk: `DESIGN.md` bans generic greys, but they still exist in several components with no test enforcing the ban.
